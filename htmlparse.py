@@ -1,11 +1,16 @@
-import urllib2
+import urllib
 from bs4 import BeautifulSoup
 
-def hello(name):
-	print "hello " + name
+print "Enter the website to search through"
+site = raw_input()
 
-html = urllib2.urlopen('http://www.chinesetop100.com/').read()
+# instantiate the parser and fed it some HTML
+sock = urllib.urlopen("http://" + site + "/")
+htmlsource = sock.read()
+sock.close()
 
-soup = BeautifulSoup(html)
+soup = BeautifulSoup(htmlsource)
 
-print ((soup.get_text()).encode('utf8'))
+print soup.get_text()
+
+
