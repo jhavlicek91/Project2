@@ -13,3 +13,4 @@ result = soup.get_text()
 f = open('result.txt','w')
 f.write(result.encode('utf8'))
 f.close()
+
