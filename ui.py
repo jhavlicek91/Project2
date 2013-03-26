@@ -1,6 +1,7 @@
 from Tkinter import *
 import urllib
 import xlwt
+import os
 
 master = Tk()
 
@@ -20,16 +21,9 @@ def Go():
     keywords =  keywordEnter.get()
     excelfile = outputEnter.get()
 
-    #if file is html
+    os.system("python pdf2txt.py -o temp.txt " + searchfile + ".pdf") 
+    print "a"
 
-    #if file is pdf
-
-    #if file is txt
-
-
-    #output results
-
-type = StringVar()
 
 #Add file heading
 head = Label(master, text="File:")
@@ -56,7 +50,7 @@ head1 = Label(master, text="Keywords:")
 head1.grid(row=4,column=0,sticky=W)
 
 #Add keyword textbox
-keywordEnter = Entry(master)
+keywordEnter = Entry(master, width = 50)
 keywordEnter.grid(row=5,column=0)
 
 #Add excel heading
