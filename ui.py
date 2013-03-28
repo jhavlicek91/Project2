@@ -49,6 +49,10 @@ def ReadTextFile(FileName, keywords):
     #Get the text file to search through and open it
     f = file(FileName, 'r')
 
+    #account for capital letters as well
+    caps = keywords.title()
+    keywords = keywords + " " + caps
+
     #Get the keyword(s) you want to search for
     words = keywords.split()
 
@@ -69,6 +73,13 @@ def ReadTextFile(FileName, keywords):
     for key in new_dict.keys():
         print "%r: %r" % (key, new_dict[key])
 
+    halfway = len(new_dict) / 2;
+
+    for i in range (0, halfway):
+       key = new_dict.keys()[i]
+       key2 = new_dict.keys()[i + halfway]
+       new_dict[key] += new_dict[ key2 ] 
+    
     #Close the file you read
     f.close()
 
@@ -133,9 +144,12 @@ def MakeExcel(excelfile, searchfile, results):
 
     index = 2
 
-    for w in results:
-         worksheet.write(index, 1, w)
-         worksheet.write(index, 2, results[w])
+    halfway = len(results) / 2
+
+    for w in range(0, halfway):
+         key = results.keys()[w]
+         worksheet.write(index, 1, key)
+         worksheet.write(index, 2, results[key])
          index += 1
 
     workbook.save(filename)
