@@ -13,7 +13,7 @@ head = Label(master, text="File:")
 head.grid(row=0,column=0,sticky= W)
 
 #Add file text box
-fileEnter = Entry(master)
+fileEnter = Entry(master, width = 35)
 fileEnter.grid(row=1,column=0)
 
 ftype = IntVar() 
@@ -34,7 +34,7 @@ head1 = Label(master, text="Keywords:")
 head1.grid(row=4,column=0,sticky=W)
 
 #Add keyword textbox
-keywordEnter = Entry(master, width = 50)
+keywordEnter = Entry(master, width = 35)
 keywordEnter.grid(row=5,column=0)
 
 #Add excel heading
@@ -42,7 +42,7 @@ head2=Label(master, text="Output Excel File:")
 head2.grid(row=6,column=0,sticky=W)
 
 #add excel text box
-outputEnter = Entry(master)
+outputEnter = Entry(master, width = 35)
 outputEnter.grid(row=7,column=0)
 
 def ReadTextFile(FileName, keywords):
@@ -71,6 +71,7 @@ def ReadTextFile(FileName, keywords):
 
     #Close the file you read
     f.close()
+       
 
 #Function for when go is clicked
 def Go():
@@ -88,6 +89,8 @@ def Go():
        print "PDF"
        os.system("python pdf2txt.py -o temp.txt " + searchfile + ".pdf") 
        ReadTextFile("temp.txt", keywords)
+       #Delete the temporary file
+       os.remove("temp.txt");
 
     #if txt file is selected
     if ftype.get() == 3:
