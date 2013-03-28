@@ -71,6 +71,8 @@ def ReadTextFile(FileName, keywords):
 
     #Close the file you read
     f.close()
+
+    return new_dict;
        
 
 #Function for when go is clicked
@@ -88,13 +90,55 @@ def Go():
     if ftype.get() == 2:
        print "PDF"
        os.system("python pdf2txt.py -o temp.txt " + searchfile + ".pdf") 
-       ReadTextFile("temp.txt", keywords)
+       results = ReadTextFile("temp.txt", keywords)
        #Delete the temporary file
        os.remove("temp.txt");
 
     #if txt file is selected
     if ftype.get() == 3:
-       ReadTextFile(searchfile, keywords)
+       results = ReadTextFile(searchfile, keywords)
+
+    #Write output to the excel file
+    MakeExcel(excelfile, searchfile, results);
+
+def MakeExcel(excelfile, searchfile, results):
+    filename = excelfile + '.xls'
+    if len(searchfile) > 20:
+	    article = searchfile[:18] + '...'
+    else:
+	    article = searchfile
+
+    workbook = xlwt.Workbook(encoding = 'ascii')
+    worksheet = workbook.add_sheet(article)
+
+    font = xlwt.Font()
+    font.bold = True
+    font.height = 0x010D
+    font.underline = True
+    style = xlwt.XFStyle()
+    style.font = font
+
+    worksheet.col(0).width = 3333
+    worksheet.row(0).height = 400
+
+    font2 = xlwt.Font()
+    font2.bold = True
+    font2.underline = True
+    style2 = xlwt.XFStyle()
+    style2.font = font2
+
+    worksheet.write_merge(0, 0, 0, 10, searchfile, style)
+    worksheet.write(1, 1, 'Words', style2)
+    worksheet.write(1, 2, 'Count', style2)
+
+    index = 2
+
+    for w in results:
+         worksheet.write(index, 1, w)
+         worksheet.write(index, 2, results[w])
+         index += 1
+
+    workbook.save(filename)
 
 #Add go button
 GObutton = Button(master,text="Go!", fg="black", command= Go)
