@@ -1,8 +1,8 @@
-import nltk
+from nltk import wordnet as wn
 
 word = "season"
 
-syns = word.synsets(a)
+syns = wn.synset(w)
 print "synsets:", syns
 
 for s in syns:

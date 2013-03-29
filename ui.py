@@ -32,12 +32,12 @@ def GetFileName():
 
 #Add file Dilog box for the file to open
 fd1 = Button(master, text = "File", fg = "black", command = GetFileName )
-fd1.grid(row = 1, column = 4 )
+fd1.grid(row = 1, column = 2 )
 
 ftype = IntVar() 
 #Add HTML Radio Button
-HTMLbutton = Radiobutton(master, text="HTML", fg="black", variable = ftype, value =1)
-HTMLbutton.grid(row=2,column=0,sticky=E)
+HTMLbutton = Radiobutton(master, text = "HTML", fg = "black", variable = ftype, value = 1)
+HTMLbutton.grid(row = 2,column = 0,sticky=E)
 
 #Add PDF Radio Button
 PDFbutton = Radiobutton(master, text = "PDF ", fg = "black", variable = ftype, value = 2 )
@@ -72,7 +72,7 @@ outputEnter.grid(row = 7,column = 0)
 
 #Add file Dilog box for the file to open
 fd1 = Button(master, text = "File", fg = "black", command = GetFileName2 )
-fd1.grid(row = 7, column = 4 )
+fd1.grid(row = 7, column = 2 )
 
 def ReadTextFile(FileName, keywords):
     #Get the text file to search through and open it
@@ -130,20 +130,20 @@ def Go():
     master1.title("Synonyms")
 
     #Add Synonym Label
-    lab = Label(master1, text="Synonyms:")
-    lab.grid(row=0,column = 0,sticky = W)
+    lab = Label(master1, text = "Synonyms for " + keyword + ":")
+    lab.grid(row = 0,column = 0, sticky = W)
 
     i = 0;
     #Populate checkboxes with synonyms
     for w in words:
        checks[w] = IntVar()
        check = Checkbutton(master1, text = w, variable = checks[w], onvalue = 1, offvalue = 0)
-       check.grid(row = i + 1,column = 0, sticky = W)
+       check.grid(row = i + 1, column = 0, sticky = W)
        i += 1
 
     #Add optional synonym box 
-    otherEnter = Entry(master1,width =30)
-    otherEnter.grid(row=len(words)+2,column=0)
+    otherEnter = Entry(master1,width = 30)
+    otherEnter.grid(row = len(words) + 2, column = 0)
     
     lab1= Label(master1, text="Others:")
     lab1.grid(row = len(words) + 1, column = 0, sticky = W)
@@ -171,19 +171,20 @@ def go2():
     #if html is selected
     if ftype.get() == 1:
         sock = urllib.urlopen("http://" + searchfile + "/")
-        htmlsouce = sock.read()
+        htmlsource = sock.read()
         sock.close()
-        soup = BeautifulSoup(htmlsouce)
+        soup = BeautifulSoup(htmlsource)
         result = soup.get_text()
         f = open('temp.txt','w')
         f.write(result.encode('utf8'))
         f.close()
-        ReadTextFile("temp.txt")
+        results = ReadTextFile("temp.txt", keywords)
+        os.remove("temp.txt")
 
     #if pdf is selected
     if ftype.get() == 2:
        print "PDF"
-       os.system("python pdf2txt.py -o temp.txt " + searchfile + ".pdf") 
+       os.system("python pdf2txt.py -o temp.txt " + searchfile) 
        results = ReadTextFile("temp.txt", keywords)
        #Delete the temporary file
        os.remove("temp.txt");
@@ -193,7 +194,7 @@ def go2():
        results = ReadTextFile(searchfile, keywords)
 
     #Write output to the excel file
-    #MakeExcel(excelfile, searchfile, results);
+    MakeExcel(excelfile, searchfile, results);
 
 #Function for writing results to an excel file
 def MakeExcel(excelfile, searchfile, results):
