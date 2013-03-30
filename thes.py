@@ -2,7 +2,7 @@ from nltk import wordnet as wn
 
 word = "season"
 
-syns = wn.synset(w)
+syns = Synsets(w)
 print "synsets:", syns
 
 for s in syns:

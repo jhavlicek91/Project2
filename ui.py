@@ -6,74 +6,8 @@ import os
 import re
 from bs4 import BeautifulSoup
 
-#Global Variables
-checks = dict()
-words = list()
-finalwords = list()
 
-#Make window
-master = Tk()
-master.title("Project2")
-
-#Add file heading
-head = Label(master, text="File:")
-head.grid(row = 0,column = 0,sticky= W)
-
-#Add file text box
-fil = StringVar()
-fileEnter = Entry(master, width = 35, textvariable = fil)
-fileEnter.grid(row=1,column=0)
-
-def GetFileName():
-    # get filename
-    filename = tkFileDialog.askopenfilename()
-    print "%r" % (filename)
-    fil.set(filename)
-
-#Add file Dilog box for the file to open
-fd1 = Button(master, text = "File", fg = "black", command = GetFileName )
-fd1.grid(row = 1, column = 2 )
-
-ftype = IntVar() 
-#Add HTML Radio Button
-HTMLbutton = Radiobutton(master, text = "HTML", fg = "black", variable = ftype, value = 1)
-HTMLbutton.grid(row = 2,column = 0,sticky=E)
-
-#Add PDF Radio Button
-PDFbutton = Radiobutton(master, text = "PDF ", fg = "black", variable = ftype, value = 2 )
-PDFbutton.grid(row = 2, column = 2)
-
-#Add text Radio button
-TXTbutton = Radiobutton(master, text = "TXT", fg="black", variable= ftype, value= 3)
-TXTbutton.grid(row = 2,column = 3)
-
-#Add keyword heading 
-head1 = Label(master, text="Keywords:")
-head1.grid(row = 4,column = 0,sticky = W)
-
-#Add keyword textbox
-keywordEnter = Entry(master, width = 35)
-keywordEnter.grid(row = 5,column = 0)
-
-#Add excel heading
-head2=Label(master, text = "Output Excel File:")
-head2.grid(row = 6,column = 0,sticky = W)
-
-def GetFileName2():
-    # get filename
-    filename = tkFileDialog.askopenfilename()
-    print "%r" % (filename)
-    ex.set(filename)
-
-#add excel text box
-ex = StringVar()
-outputEnter = Entry(master, width = 35, textvariable = ex)
-outputEnter.grid(row = 7,column = 0)
-
-#Add file Dilog box for the file to open
-fd1 = Button(master, text = "File", fg = "black", command = GetFileName2 )
-fd1.grid(row = 7, column = 2 )
-
+#Class for searching textfiles for keywords        
 def ReadTextFile(FileName, keywords):
     #Get the text file to search through and open it
     f = file(FileName, 'r')
@@ -113,88 +47,6 @@ def ReadTextFile(FileName, keywords):
     f.close()
 
     return new_dict;
-
-#Function for when go is clicked
-def Go():
-    keyword =  keywordEnter.get()
-
-    #Create list with synonyms
-    words.append("one")
-    words.append("two")
-    words.append("three")
-    words.append("four")
-    words.append("five")
-
-    #open new screen displaying synonyms
-    master1 =Tk()
-    master1.title("Synonyms")
-
-    #Add Synonym Label
-    lab = Label(master1, text = "Synonyms for " + keyword + ":")
-    lab.grid(row = 0,column = 0, sticky = W)
-
-    i = 0;
-    #Populate checkboxes with synonyms
-    for w in words:
-       checks[w] = IntVar()
-       check = Checkbutton(master1, text = w, variable = checks[w], onvalue = 1, offvalue = 0)
-       check.grid(row = i + 1, column = 0, sticky = W)
-       i += 1
-
-    #Add optional synonym box 
-    otherEnter = Entry(master1,width = 30)
-    otherEnter.grid(row = len(words) + 2, column = 0)
-    
-    lab1= Label(master1, text="Others:")
-    lab1.grid(row = len(words) + 1, column = 0, sticky = W)
-
-    #Place the go button
-    finishbutton = Button(master1, text = "Go!", command = go2)
-    finishbutton.grid(row = len(words) + 2, column = 3)
-
-    #return list with keyword and correct synonyms
-
-#Function for the second go button     
-def go2():
-
-    for w in words:
-       print "%r  %r" % (w , checks[w].get() )
-       if checks[w].get() == 1:
-          finalwords.append(w)
-          print "%r" % (w)
-
-    #collect data
-    searchfile = fileEnter.get()
-    excelfile = outputEnter.get()
-    keywords = keywordEnter.get()
-
-    #if html is selected
-    if ftype.get() == 1:
-        sock = urllib.urlopen("http://" + searchfile + "/")
-        htmlsource = sock.read()
-        sock.close()
-        soup = BeautifulSoup(htmlsource)
-        result = soup.get_text()
-        f = open('temp.txt','w')
-        f.write(result.encode('utf8'))
-        f.close()
-        results = ReadTextFile("temp.txt", keywords)
-        os.remove("temp.txt")
-
-    #if pdf is selected
-    if ftype.get() == 2:
-       print "PDF"
-       os.system("python pdf2txt.py -o temp.txt " + searchfile) 
-       results = ReadTextFile("temp.txt", keywords)
-       #Delete the temporary file
-       os.remove("temp.txt");
-
-    #if txt file is selected
-    if ftype.get() == 3:
-       results = ReadTextFile(searchfile, keywords)
-
-    #Write output to the excel file
-    MakeExcel(excelfile, searchfile, results);
 
 #Function for writing results to an excel file
 def MakeExcel(excelfile, searchfile, results):
@@ -240,9 +92,185 @@ def MakeExcel(excelfile, searchfile, results):
 
     workbook.save(filename)
 
-#Add go button
-GObutton = Button(master,text = "Go!", fg = "black", command = Go)
-GObutton.grid(row = 8,column = 6)
+
+class WindowOne:
+
+    def __init__(self, parent):
+
+        frame = Frame(parent)
+        frame.pack()
+        self.parent = parent
+
+        #Add file heading
+        self.heading = Label(frame, text="File:")
+        self.heading.grid(row = 0,column = 0,sticky= W)
+
+        #Add file text box
+        fil = StringVar()
+        self.input = Entry(frame, width = 35, textvariable = fil)
+        self.input.grid(row=1,column=0)
+
+        def GetFileName():
+            # get filename
+            filename = tkFileDialog.askopenfilename()
+            print "%r" % (filename)
+            fil.set(filename)
+
+        #Add file Dilog box for the file to open
+        self.inputdialog = Button(frame, text = "File", fg = "black", command = GetFileName )
+        self.inputdialog.grid(row = 1, column = 2 )
+
+        self.ftype = IntVar() 
+        #Add HTML Radio Button
+        self.HTMLbutton = Radiobutton(frame, text = "HTML", fg = "black", variable = self.ftype, value = 1)
+        self.HTMLbutton.grid(row = 2,column = 0,sticky = E)
+
+        #Add PDF Radio Button
+        self.PDFbutton = Radiobutton(frame, text = "PDF ", fg = "black", variable = self.ftype, value = 2 )
+        self.PDFbutton.grid(row = 2, column = 2)
+
+        #Add text Radio button
+        self.TXTbutton = Radiobutton(frame, text = "TXT", fg = "black", variable = self.ftype, value = 3)
+        self.TXTbutton.grid(row = 2,column = 3)
+
+        #Add keyword heading 
+        self.head1 = Label(frame, text = "Keywords:")
+        self.head1.grid(row = 4,column = 0,sticky = W)
+
+        #Add keyword textbox
+        self.keywordEnter = Entry(frame, width = 35)
+        self.keywordEnter.grid(row = 5,column = 0)
+
+        #Add excel heading
+        self.head2 = Label(frame, text = "Output Excel File:")
+        self.head2.grid(row = 6,column = 0,sticky = W)
+
+        def GetFileName2():
+            # get filename
+            filename = tkFileDialog.askopenfilename()
+            print "%r" % (filename)
+            ex.set(filename)
+
+        #add excel text box
+        ex = StringVar()
+        self.outputEnter = Entry(frame, width = 35, textvariable = ex)
+        self.outputEnter.grid(row = 7,column = 0)
+
+        #Add file Dilog box for the file to open
+        self.outputdialog = Button(frame, text = "File", fg = "black", command = GetFileName2 )
+        self.outputdialog.grid(row = 7, column = 2 )
+
+        #Add go button
+        self.GObutton = Button(frame,text = "Go!", fg = "black", command = self.Go )
+        self.GObutton.grid(row = 8,column = 6)
+
+    #Function for when go is clicked
+    def Go(self):
+        self.keyword = self.keywordEnter.get()
+        self.excel = self.outputEnter.get()
+        self.open = self.input.get()
+
+        #open new screen displaying synonyms
+        master1 = Tk()
+        master1.title("Synonyms")
+        w2 = SynonymWindow(master1, self.keyword, self.excel, self.open, self.ftype)
+
+       #return list with keyword and correct synonyms
+
+class SynonymWindow:
+
+    def __init__(self, parent, keyword, excel, op, ftype):
+        frame = Frame(parent)
+        frame.pack()
+        self.keyword = keyword
+        self.excel = excel
+        self.op = op
+        self.ftype = ftype
+        self.finalwords = list()
+
+        self.words = list()
+            
+        #Create list with synonyms
+        self.words.append("one")  
+        self.words.append("two")
+        self.words.append("three")
+        self.words.append("four")
+        self.words.append("five")
+
+        #Add Synonym Label
+        self.lab = Label(frame, text = "Synonyms for " + self.keyword + ":")
+        self.lab.grid(row = 0,column = 0, sticky = W)
+
+        i = 0;
+        self.checks = dict()
+        #Populate checkboxes with synonyms
+        for w in self.words:
+           self.checks[w] = IntVar()
+           self.check = Checkbutton(frame, text = w, variable = self.checks[w], onvalue = 1, offvalue = 0)
+           self.check.grid(row = i + 1, column = 0, sticky = W)
+           i += 1
+
+        #Add optional synonym box 
+        self.otherEnter = Entry(frame, width = 30)
+        self.otherEnter.grid(row = len(self.words) + 2, column = 0)
+        
+        self.lab1= Label(frame, text = "Others:")
+        self.lab1.grid(row = len(self.words) + 1, column = 0, sticky = W)
+
+        #Place the go button
+        self.finishbutton = Button(frame, text = "Go!", command = self.go2)
+        self.finishbutton.grid(row = len(self.words) + 2, column = 3)
 
 
-mainloop()
+    #Function for the second go button     
+    def go2(self):
+
+        #Add main word to list of words to be searched for
+        self.finalwords.append(self.keyword)
+
+        #Go through words and check if the checkboxes have been selected
+        for w in self.words:
+           print "%r  %d" % (w , self.checks[w].get() )
+           if self.checks[w].get() == 1:
+              self.finalwords.append(w)
+              print "%r" % (w)
+
+        print "%r" % (self.finalwords)
+
+        #if html is selected
+        if self.ftype.get() == 1:
+            sock = urllib.urlopen("http://" + self.op + "/")
+            htmlsource = sock.read()
+            sock.close()
+            soup = BeautifulSoup(htmlsource)
+            result = soup.get_text()
+            f = open('temp.txt','w')
+            f.write(result.encode('utf8'))
+            f.close()
+            results = ReadTextFile("temp.txt", self.keyword)
+            os.remove("temp.txt")
+
+        #if pdf is selected
+        if self.ftype.get() == 2:
+           print "PDF"
+           os.system("python pdf2txt.py -o temp.txt " + self.op) 
+           results = ReadTextFile("temp.txt", self.keyword)
+           #Delete the temporary file
+           os.remove("temp.txt");
+
+        #if txt file is selected
+        if self.ftype.get() == 3:
+           results = ReadTextFile(self.op, self.keyword)
+
+        #Write output to the excel file
+        MakeExcel(self.excel, self.excel, results);
+
+
+def main():
+    master = Tk()
+    master.title("Project 2")
+    w1 = WindowOne(master)
+    mainloop()
+
+if __name__ == '__main__':
+    main()
