@@ -13,43 +13,52 @@ def ReadTextFile(FileName, keywords):
     f = file(FileName, 'r')
 
     #account for capital letters as well
-    caps = keywords.title()
-    keywords = keywords + " " + caps
+    caps = list()
+    for l in keywords:
+        cap = l.title()   
+        caps.append(cap)
 
-    #Get the keyword(s) you want to search for
-    words = keywords.split()
+    for c in caps:
+        keywords.append(c)
 
     #Create dictionary that has each keyword and the 
     #number of times it appeared in the file
     new_dict = {}
 
-    for w in words:
+    #Initialize the dictionary
+    for w in keywords:
        new_dict[w] = 0
-    
+
+    #Go through each line in the text and search for every word in it
     for line in f:
-        for w in words:
+        for w in keywords:
             instances = re.findall(w, line)
             amount = len(instances)
             new_amount = amount + new_dict[w]
             new_dict[w] = new_amount
-            
+
+    #print out resultss          
     for key in new_dict.keys():
         print "%r: %r" % (key, new_dict[key])
 
+    #sort dictionary
+    sort = sorted(new_dict) 
+    
+    #create a new dictionary without both capital and non capital letters
+    complete = dict()
     halfway = len(new_dict) / 2;
-
-    for i in range (0, halfway):
-       key = new_dict.keys()[i]
-       key2 = new_dict.keys()[i + halfway]
-       new_dict[key] += new_dict[ key2 ] 
+    for i in range(0, halfway):
+       key = sort[i]
+       key2 = sort[i + halfway]
+       complete[key] = new_dict[key] + new_dict[ key2 ] 
     
     #Close the file you read
     f.close()
 
-    return new_dict;
+    return complete;
 
 #Function for writing results to an excel file
-def MakeExcel(excelfile, searchfile, results):
+def MakeExcel(excelfile, searchfile, results, keyword):
 
     filename = excelfile + '.xls'
     if len(searchfile) > 20:
@@ -60,6 +69,7 @@ def MakeExcel(excelfile, searchfile, results):
     workbook = xlwt.Workbook(encoding = 'ascii')
     worksheet = workbook.add_sheet(article)
 
+    #Set font and style
     font = xlwt.Font()
     font.bold = True
     font.height = 0x010D
@@ -70,25 +80,37 @@ def MakeExcel(excelfile, searchfile, results):
     worksheet.col(0).width = 3333
     worksheet.row(0).height = 400
 
+    #Set font and style of file
     font2 = xlwt.Font()
     font2.bold = True
     font2.underline = True
     style2 = xlwt.XFStyle()
     style2.font = font2
 
+    #Write the title of the file
     worksheet.write_merge(0, 0, 0, 10, searchfile, style)
     worksheet.write(1, 1, 'Words', style2)
     worksheet.write(1, 2, 'Count', style2)
 
+    #Write cells corresponding to the main word
     index = 2
+    worksheet.write(index, 0, "Main Term")
+    worksheet.write(index, 1, keyword)
+    worksheet.write(index, 2, results[keyword])
 
-    halfway = len(results) / 2
+    #Write the rest of the cells
+    index = 3
+    summ = 0
+    for w in results.keys():
+         if w != keyword:
+             worksheet.write(index, 1, w)
+             worksheet.write(index, 2, results[w])
+             index += 1
+         summ += results[w]
 
-    for w in range(0, halfway):
-         key = results.keys()[w]
-         worksheet.write(index, 1, key)
-         worksheet.write(index, 2, results[key])
-         index += 1
+    #Write the sum of the keywords
+    worksheet.write(index + 1, 1, "Total")
+    worksheet.write(index + 1, 2, summ)
 
     workbook.save(filename)
 
@@ -228,6 +250,11 @@ class SynonymWindow:
         #Add main word to list of words to be searched for
         self.finalwords.append(self.keyword)
 
+        #Add optional synonyms to the list
+        self.extra = self.otherEnter.get().split()
+        for s in self.extra:
+            self.finalwords.append(s)
+
         #Go through words and check if the checkboxes have been selected
         for w in self.words:
            print "%r  %d" % (w , self.checks[w].get() )
@@ -247,23 +274,23 @@ class SynonymWindow:
             f = open('temp.txt','w')
             f.write(result.encode('utf8'))
             f.close()
-            results = ReadTextFile("temp.txt", self.keyword)
+            results = ReadTextFile("temp.txt", self.finalwords)
             os.remove("temp.txt")
 
         #if pdf is selected
         if self.ftype.get() == 2:
            print "PDF"
            os.system("python pdf2txt.py -o temp.txt " + self.op) 
-           results = ReadTextFile("temp.txt", self.keyword)
+           results = ReadTextFile("temp.txt", self.finalwords)
            #Delete the temporary file
-           os.remove("temp.txt");
+           os.remove("temp.txt")
 
         #if txt file is selected
         if self.ftype.get() == 3:
-           results = ReadTextFile(self.op, self.keyword)
+           results = ReadTextFile(self.op, self.finalwords)
 
         #Write output to the excel file
-        MakeExcel(self.excel, self.excel, results);
+        MakeExcel(self.excel, self.excel, results, self.keyword.capitalize());
 
 
 def main():
