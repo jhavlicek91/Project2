@@ -173,6 +173,14 @@ class WindowOne:
         self.head2 = Label(frame, text = "Output Excel File:")
         self.head2.grid(row = 6,column = 0,sticky = W)
 
+	#Add excel work book page
+	self.head3 = Label(frame, text = "Worksheet Title:")
+	self.head3.grid(row=8,column=0,sticky =W)
+
+	#add workbook textbox
+	self.worksheetEnter = Entry(frame,width=35)
+	self.worksheetEnter.grid(row=9, column =0)
+
         def GetFileName2():
             # get filename
             filename = tkFileDialog.askopenfilename()
@@ -190,7 +198,7 @@ class WindowOne:
 
         #Add go button
         self.GObutton = Button(frame,text = "Go!", fg = "black", command = self.Go )
-        self.GObutton.grid(row = 8,column = 6)
+        self.GObutton.grid(row = 9,column = 6)
 
     #Function for when go is clicked
     def Go(self):
