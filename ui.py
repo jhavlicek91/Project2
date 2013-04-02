@@ -286,8 +286,8 @@ class SynonymWindow:
         #if pdf is selected
         if self.ftype.get() == 2:
            print "PDF"
-	   if self.op.endswith('.pdf')  os.system("python pdf2txt.py -o temp.txt " + self.op) 
-	   else os.system("python pdf2txt.py -o temp.txt " + self.op + ".pdf")
+	   if self.op.endswith('.pdf'): os.system("python pdf2txt.py -o temp.txt " + self.op) 
+	   else: os.system("python pdf2txt.py -o temp.txt " + self.op + ".pdf")
            results = ReadTextFile("temp.txt", self.finalwords)
            #Delete the temporary file
            os.remove("temp.txt")
