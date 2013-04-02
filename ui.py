@@ -59,8 +59,11 @@ def ReadTextFile(FileName, keywords):
 
 #Function for writing results to an excel file
 def MakeExcel(excelfile, searchfile, results, keyword):
+    if(excelfile.endswith('.xls'):
+	filename = excelfile
+    else:
+    	filename = excelfile + '.xls'
 
-    filename = excelfile + '.xls'
     if len(searchfile) > 20:
 	    article = searchfile[:18] + '...'
     else:

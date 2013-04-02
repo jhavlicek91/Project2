@@ -122,7 +122,7 @@ def MakeExcel(excelfile, searchfile, results):
 
     workbook = xlwt.Workbook(encoding = 'ascii')
     worksheet = workbook.add_sheet(article)
-    sheet = workbook.sheet_by_name('article')
+    workbook.save(filename)
 
     hold = FindStart(filename, article)
     worksheet.write(6, 10, hold)
@@ -166,7 +166,7 @@ def FindStart(filename, article):
     wkst = wkbk.sheet_by_name(article)
     index = 2
 
-    check = wkst.cell(index, 1).value
+    check = wkst.cell_value(0, 0)
     
     return check
 
