@@ -59,10 +59,13 @@ def ReadTextFile(FileName, keywords):
 
 #Function for writing results to an excel file
 def MakeExcel(excelfile, searchfile, results, keyword):
-    if(excelfile.endswith('.xls')):
-	filename = excelfile
+
+    #Determine file to write to
+    if excelfile.endswith('.xls') :
+       filename = excelfile
     else:
-    	filename = excelfile + '.xls'
+       filename = excelfile + '.xls'
+
 
     if len(searchfile) > 20:
 	    article = searchfile[:18] + '...'
@@ -283,7 +286,8 @@ class SynonymWindow:
         #if pdf is selected
         if self.ftype.get() == 2:
            print "PDF"
-           os.system("python pdf2txt.py -o temp.txt " + self.op) 
+	   if self.op.endswith('.pdf'): os.system("python pdf2txt.py -o temp.txt " + self.op) 
+	   else: os.system("python pdf2txt.py -o temp.txt " + self.op + ".pdf")
            results = ReadTextFile("temp.txt", self.finalwords)
            #Delete the temporary file
            os.remove("temp.txt")
@@ -293,7 +297,7 @@ class SynonymWindow:
            results = ReadTextFile(self.op, self.finalwords)
 
         #Write output to the excel file
-        MakeExcel(self.excel, self.excel, results, self.keyword.capitalize());
+        MakeExcel(self.excel, self.op, results, self.keyword.capitalize());
 
 
 def main():
