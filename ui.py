@@ -5,7 +5,12 @@ import xlwt
 import os
 import re
 from bs4 import BeautifulSoup
+import nltk 
+nltk.data.path.append('./nltk_data/')
+from nltk.corpus import wordnet as wn
 
+def checkbox(word):
+    print "%r" % (word)
 
 #Class for searching textfiles for keywords        
 def ReadTextFile(FileName, keywords):
@@ -173,13 +178,11 @@ class WindowOne:
         self.head2 = Label(frame, text = "Output Excel File:")
         self.head2.grid(row = 6,column = 0,sticky = W)
 
-	#Add excel work book page
-	self.head3 = Label(frame, text = "Worksheet Title:")
-	self.head3.grid(row=8,column=0,sticky =W)
+	    #Add excel work book page
+        self.head3 = Label(frame, text = "Worksheet Title:").grid(row = 8, column = 0, sticky = W)
 
-	#add workbook textbox
-	self.worksheetEnter = Entry(frame,width=35)
-	self.worksheetEnter.grid(row=9, column =0)
+	    #add workbook textbox
+        self.worksheetEnter = Entry(frame, width = 35).grid(row = 9, column = 0)
 
         def GetFileName2():
             # get filename
@@ -225,14 +228,22 @@ class SynonymWindow:
         self.finalwords = list()
 
         self.words = list()
+        self.synonyms = list()
+        self.temp = list()
             
         #Create list with synonyms
-        self.words.append("one")  
-        self.words.append("two")
-        self.words.append("three")
-        self.words.append("four")
-        self.words.append("five")
+        self.syns = wn.synsets(self.keyword)
+        for si in self.syns:
+           for l in si.lemmas:
+              self.synonyms.append(l.name)
 
+        #get rid of duplicates in list of synonyms
+        self.temp = set(self.synonyms)
+
+        #remove a word if it is the keyword & replace '_" with a space
+        for w in self.temp:
+           if w != self.keyword and w != self.keyword.capitalize() : self.words.append(w.replace('_', ' '))
+        
         #Add Synonym Label
         self.lab = Label(frame, text = "Synonyms for " + self.keyword + ":")
         self.lab.grid(row = 0,column = 0, sticky = W)
@@ -242,7 +253,7 @@ class SynonymWindow:
         #Populate checkboxes with synonyms
         for w in self.words:
            self.checks[w] = IntVar()
-           self.check = Checkbutton(frame, text = w, variable = self.checks[w], onvalue = 1, offvalue = 0)
+           self.check = Checkbutton(frame, text = w, variable = self.checks[w])
            self.check.grid(row = i + 1, column = 0, sticky = W)
            i += 1
 
@@ -250,7 +261,7 @@ class SynonymWindow:
         self.otherEnter = Entry(frame, width = 30)
         self.otherEnter.grid(row = len(self.words) + 2, column = 0)
         
-        self.lab1= Label(frame, text = "Others:")
+        self.lab1= Label(frame, text = "Additional words to look up:")
         self.lab1.grid(row = len(self.words) + 1, column = 0, sticky = W)
 
         #Place the go button
