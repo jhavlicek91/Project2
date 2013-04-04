@@ -71,11 +71,12 @@ def MakeExcel(excelfile, searchfile, results, keyword):
     else:
        filename = excelfile + '.xls'
 
-
     if len(searchfile) > 20:
 	    article = searchfile[:18] + '...'
     else:
 	    article = searchfile
+
+    print "%r  %r" % (searchfile, article)
 
     workbook = xlwt.Workbook(encoding = 'ascii')
     worksheet = workbook.add_sheet(article)
@@ -176,7 +177,7 @@ class WindowOne:
 
         #Add excel heading
         self.head2 = Label(frame, text = "Output Excel File:")
-        self.head2.grid(row = 6,column = 0,sticky = W)
+        self.head2.grid(row = 6,column = 0, sticky = W)
 
 	    #Add excel work book page
         self.head3 = Label(frame, text = "Worksheet Title:").grid(row = 8, column = 0, sticky = W)
@@ -186,7 +187,7 @@ class WindowOne:
 
         def GetFileName2():
             # get filename
-            filename = tkFileDialog.askopenfilename()
+            filename = tkFileDialog.asksaveasfilename()
             print "%r" % (filename)
             ex.set(filename)
 
@@ -213,6 +214,7 @@ class WindowOne:
         master1 = Tk()
         master1.title("Synonyms")
         w2 = SynonymWindow(master1, self.keyword, self.excel, self.open, self.ftype)
+
 
        #return list with keyword and correct synonyms
 
@@ -253,7 +255,7 @@ class SynonymWindow:
         #Populate checkboxes with synonyms
         for w in self.words:
            self.checks[w] = IntVar()
-           self.check = Checkbutton(frame, text = w, variable = self.checks[w])
+           self.check = Checkbutton(frame, text = w, variable = self.checks[w] )
            self.check.grid(row = i + 1, column = 0, sticky = W)
            i += 1
 
