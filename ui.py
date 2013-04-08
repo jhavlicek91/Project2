@@ -66,6 +66,9 @@ def ReadTextFile(FileName, keywords):
 
 #Function for writing results to an excel file
 def MakeExcel(excelfile, searchfile, results, keyword):
+    
+    articleName = searchfile.split('/')
+    article = articleName[-1]
 
     articleName = searchfile.split('/')
     article = articleName[-1]
@@ -134,7 +137,6 @@ def MakeExcel(excelfile, searchfile, results, keyword):
     worksheet.write(index + 1, 2, summ)
 
     workbook.save(filename)
-
 
 class WindowOne:
 
