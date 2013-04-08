@@ -76,8 +76,6 @@ def MakeExcel(excelfile, searchfile, results, keyword):
     else:
 	    article = searchfile
 
-    print "%r  %r" % (searchfile, article)
-
     workbook = xlwt.Workbook(encoding = 'ascii')
     worksheet = workbook.add_sheet(article)
 
@@ -180,10 +178,10 @@ class WindowOne:
         self.head2.grid(row = 6,column = 0, sticky = W)
 
 	    #Add excel work book page
-        self.head3 = Label(frame, text = "Worksheet Title:").grid(row = 8, column = 0, sticky = W)
+        #self.head3 = Label(frame, text = "Worksheet Title:").grid(row = 8, column = 0, sticky = W)
 
 	    #add workbook textbox
-        self.worksheetEnter = Entry(frame, width = 35).grid(row = 9, column = 0)
+        #self.worksheetEnter = Entry(frame, width = 35).grid(row = 9, column = 0)
 
         def GetFileName2():
             # get filename
@@ -244,10 +242,16 @@ class SynonymWindow:
 
         #remove a word if it is the keyword & replace '_" with a space
         for w in self.temp:
-           if w != self.keyword and w != self.keyword.capitalize() : self.words.append(w.replace('_', ' '))
+           key = 0
+
+           #Check if the synonym is two words and contains the keyword in it
+           for l in w.split("_"):
+              if l ==  self.keyword or l == self.keyword.capitalize(): key = 1      
+              
+           if w != self.keyword and w != self.keyword.capitalize() and key == 0: self.words.append(w.replace('_', ' '))
         
         #Add Synonym Label
-        self.lab = Label(frame, text = "Synonyms for " + self.keyword + ":")
+        self.lab = Label(frame, text = "Synonyms for " + self.keyword.capitalize() + ":")
         self.lab.grid(row = 0,column = 0, sticky = W)
 
         i = 0;
@@ -255,7 +259,7 @@ class SynonymWindow:
         #Populate checkboxes with synonyms
         for w in self.words:
            self.checks[w] = IntVar()
-           self.check = Checkbutton(frame, text = w, variable = self.checks[w] )
+           self.check = Checkbutton(frame, text = w.capitalize(), variable = self.checks[w], onvalue = 1, offvalue = 0 )
            self.check.grid(row = i + 1, column = 0, sticky = W)
            i += 1
 
@@ -284,7 +288,7 @@ class SynonymWindow:
 
         #Go through words and check if the checkboxes have been selected
         for w in self.words:
-           print "%r  %d" % (w , self.checks[w].get() )
+           print "%r  %r" % (w , self.checks[w] )
            if self.checks[w].get() == 1:
               self.finalwords.append(w)
               print "%r" % (w)
