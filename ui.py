@@ -19,22 +19,27 @@ def ReadTextFile(FileName, keywords):
     #Get the text file to search through and open it
     f = file(FileName, 'r')
 
-    #account for capital letters as well
-    caps = list()
-    for l in keywords:
-        cap = l.title()   
-        caps.append(cap)
+    for k in keywords:
+       for w in keywords[k]: 
+          #account for capital letters as well
+          caps = list()
+          cap = w.title()   
+          caps.append(cap)
 
-    for c in caps:
-        keywords.append(c)
+          for c in caps:
+             keywords[k].append(c)
+
+    #up to here hava dictionary of lists of words
 
     #Create dictionary that has each keyword and the 
     #number of times it appeared in the file
-    new_dict = {}
+    complete = dict()
+    for k in keywords:
+        complete[k] = dict()
+        for w in keywords[k]:
+            complete[k][w] = 0
 
-    #Initialize the dictionary
-    for w in keywords:
-       new_dict[w] = 0
+    print "%r" % (complete)
 
     #Go through each line in the text and search for every word in it
     for line in f:
@@ -62,11 +67,13 @@ def ReadTextFile(FileName, keywords):
     #Close the file you read
     f.close()
 
+    #need to return a dictionary of dictionaries
     return complete;
 
 #Function for writing results to an excel file
 def MakeExcel(excelfile, searchfile, results, keyword):
-    
+
+    #get only the article name if directory is also listed
     articleName = searchfile.split('/')
     article = articleName[-1]
 
@@ -238,73 +245,101 @@ class SynonymWindow:
         self.excel = excel
         self.op = op
         self.ftype = ftype
-        self.finalwords = list()
+        self.finalwords = dict()
 
-        self.words = list()
+        #get different keywords from box
+        self.keywords = keyword.split()
+        self.dictionary = dict()
+        
+        self.words = dict()
         self.synonyms = list()
         self.temp = list()
+
+        for k in self.keywords: 
+            self.dictionary[k] = list() 
+            self.words[k] = list()  
             
-        #Create list with synonyms
-        self.syns = wn.synsets(self.keyword)
-        for si in self.syns:
-           for l in si.lemmas:
-              self.synonyms.append(l.name)
+            #Create lists with synonyms
+            self.syns = wn.synsets(k)
+            for si in self.syns:
+               for l in si.lemmas:
+                  self.dictionary[k].append(l.name)
 
         #get rid of duplicates in list of synonyms
-        self.temp = set(self.synonyms)
+        for k in self.keywords:
+            self.dictionary[k] = set(self.dictionary[k])
+
+        #self.temp replaced with dictionary
 
         #remove a word if it is the keyword & replace '_" with a space
-        for w in self.temp:
-           key = 0
+        for ke in self.dictionary:
+            
+            for w in self.dictionary[ke]:
+               key = 0
 
-           #Check if the synonym is two words and contains the keyword in it
-           for l in w.split("_"):
-              if l ==  self.keyword or l == self.keyword.capitalize(): key = 1      
+               #Check if the synonym is two words and contains the keyword in it
+               for l in w.split("_"):
+                  if l == ke or l == ke.capitalize(): key = 1      
+                  
+               if w != ke and w != ke.capitalize() and key == 0: self.words[ke].append(w.replace('_', ' '))
               
-           if w != self.keyword and w != self.keyword.capitalize() and key == 0: self.words.append(w.replace('_', ' '))
-        
-        #Add Synonym Label
-        self.lab = Label(frame, text = "Synonyms for " + self.keyword.capitalize() + ":")
-        self.lab.grid(row = 0,column = 0, sticky = W)
-
-        i = 0;
+        #set current row and column
+        self.currCol = 0
+        self.endRow = 0;
+        self.otherEnter = dict()
         self.checks = dict()
-        #Populate checkboxes with synonyms
-        for w in self.words:
-           self.checks[w] = IntVar()
-           self.check = Checkbutton(frame, text = w.capitalize(), variable = self.checks[w], onvalue = 1, offvalue = 0 )
-           self.check.grid(row = i + 1, column = 0, sticky = W)
-           i += 1
 
-        #Add optional synonym box 
-        self.otherEnter = Entry(frame, width = 30)
-        self.otherEnter.grid(row = len(self.words) + 2, column = 0)
+        for k in self.keywords:
+            self.checks[k] = dict()
         
-        self.lab1= Label(frame, text = "Additional words to look up:")
-        self.lab1.grid(row = len(self.words) + 1, column = 0, sticky = W)
+            #Add Synonym Label
+            self.lab = Label(frame, text = "Synonyms for " + k.capitalize() + ":")
+            self.lab.grid(row = 0, column = self.currCol, sticky = W)
+
+            i = 0;
+            #Populate checkboxes with synonyms
+            for w in self.words[k]:
+               self.checks[k][w] = IntVar()
+               self.check = Checkbutton(frame, text = w.capitalize(), variable = self.checks[k][w], onvalue = 1, offvalue = 0 )
+               self.check.grid(row = i + 1, column = self.currCol, sticky = W)
+               i += 1
+
+            #Add optional synonym box 
+            self.otherEnter[k] = Entry(frame, width = 30)
+            self.otherEnter[k].grid(row = len(self.words[k]) + 2, column = self.currCol)
+            
+            self.lab1 = Label(frame, text = "Additional words to look up:")
+            self.lab1.grid(row = len(self.words[k]) + 1, column = self.currCol, sticky = W)
+
+            self.currCol += 1
+            self.endRow = max(self.endRow, len(self.words[k]) )
 
         #Place the go button
         self.finishbutton = Button(frame, text = "Go!", command = self.go2)
-        self.finishbutton.grid(row = len(self.words) + 2, column = 3)
-
+        self.finishbutton.grid(row = self.endRow + 3, column = self.currCol)
 
     #Function for the second go button     
     def go2(self):
 
         #Add main word to list of words to be searched for
-        self.finalwords.append(self.keyword)
+        for k in self.keywords:
+            self.finalwords[k] = list()
+            self.finalwords[k].append(k)
+            self.extra = self.otherEnter[k].get().split()
 
-        #Add optional synonyms to the list
-        self.extra = self.otherEnter.get().split()
-        for s in self.extra:
-            self.finalwords.append(s)
+            #Add optional synonyms to the list
+            for s in self.extra:
+                self.finalwords[k].append(s)
+            print "%r" % (self.finalwords[k])
+        
 
         #Go through words and check if the checkboxes have been selected
-        for w in self.words:
-           print "%r  %r" % (w , self.checks[w] )
-           if self.checks[w].get() == 1:
-              self.finalwords.append(w)
-              print "%r" % (w)
+        for k in self.keywords:
+            for w in self.words[k]:
+               print "%r  %r" % (w , self.checks[k][w].get() )
+               if self.checks[k][w].get() == 1:
+                  self.finalwords[k].append(w)
+                  print "%r" % (w)
 
         print "%r" % (self.finalwords)
 
