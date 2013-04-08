@@ -10,59 +10,59 @@ import nltk
 nltk.data.path.append('./nltk_data/')
 from nltk.corpus import wordnet as wn
 
+finalwords = dict()
 
 def checkbox(word):
     print "%r" % (word)
 
 #Class for searching textfiles for keywords        
-def ReadTextFile(FileName, keywords):
+def ReadTextFile(FileName):
     #Get the text file to search through and open it
     f = file(FileName, 'r')
 
-    for k in keywords:
-       for w in keywords[k]: 
+    for k in finalwords:
+       caps = list()
+    
+       for w in finalwords[k]: 
           #account for capital letters as well
-          caps = list()
-          cap = w.title()   
+          cap = w.capitalize()   
           caps.append(cap)
 
-          for c in caps:
-             keywords[k].append(c)
-
-    #up to here hava dictionary of lists of words
+       for c in caps:
+          finalwords[k].append(c)
 
     #Create dictionary that has each keyword and the 
     #number of times it appeared in the file
     complete = dict()
-    for k in keywords:
+    for k in finalwords:
         complete[k] = dict()
-        for w in keywords[k]:
+        for w in finalwords[k]:
             complete[k][w] = 0
-
-    print "%r" % (complete)
 
     #Go through each line in the text and search for every word in it
     for line in f:
-        for w in keywords:
-            instances = re.findall(w, line)
-            amount = len(instances)
-            new_amount = amount + new_dict[w]
-            new_dict[w] = new_amount
+        for k in complete:
+            for w in complete[k]:
+                instances = re.findall(w, line)
+                amount = len(instances)
+                new_amount = amount + complete[k][w]
+                complete[k][w] = new_amount
 
-    #print out resultss          
-    for key in new_dict.keys():
-        print "%r: %r" % (key, new_dict[key])
+    for k in complete:
+        
+        #sort dictionary
+        sort = sorted(complete[k]) 
+        
+        #create a new dictionary without both capital and non capital letters
+        comp = dict()
+        halfway = len(complete[k]) / 2;
+        for i in range(0, halfway):
+           key = sort[i]
+           key2 = sort[i + halfway]
+           comp[key] = complete[k][key] + complete[k][key2] 
+        complete[k] = comp
 
-    #sort dictionary
-    sort = sorted(new_dict) 
-    
-    #create a new dictionary without both capital and non capital letters
-    complete = dict()
-    halfway = len(new_dict) / 2;
-    for i in range(0, halfway):
-       key = sort[i]
-       key2 = sort[i + halfway]
-       complete[key] = new_dict[key] + new_dict[ key2 ] 
+    print "%r" % (complete)
     
     #Close the file you read
     f.close()
@@ -245,7 +245,7 @@ class SynonymWindow:
         self.excel = excel
         self.op = op
         self.ftype = ftype
-        self.finalwords = dict()
+        finalwords = dict()
 
         #get different keywords from box
         self.keywords = keyword.split()
@@ -323,14 +323,14 @@ class SynonymWindow:
 
         #Add main word to list of words to be searched for
         for k in self.keywords:
-            self.finalwords[k] = list()
-            self.finalwords[k].append(k)
+            finalwords[k] = list()
+            finalwords[k].append(k)
             self.extra = self.otherEnter[k].get().split()
 
             #Add optional synonyms to the list
             for s in self.extra:
-                self.finalwords[k].append(s)
-            print "%r" % (self.finalwords[k])
+                finalwords[k].append(s)
+            print "%r" % (finalwords[k])
         
 
         #Go through words and check if the checkboxes have been selected
@@ -338,10 +338,10 @@ class SynonymWindow:
             for w in self.words[k]:
                print "%r  %r" % (w , self.checks[k][w].get() )
                if self.checks[k][w].get() == 1:
-                  self.finalwords[k].append(w)
+                  finalwords[k].append(w)
                   print "%r" % (w)
 
-        print "%r" % (self.finalwords)
+        print "%r" % (finalwords)
 
         #if html is selected
         if self.ftype.get() == 1:
@@ -353,7 +353,7 @@ class SynonymWindow:
             f = open('temp.txt','w')
             f.write(result.encode('utf8'))
             f.close()
-            results = ReadTextFile("temp.txt", self.finalwords)
+            results = ReadTextFile("temp.txt")
             os.remove("temp.txt")
 
         #if pdf is selected
@@ -361,13 +361,13 @@ class SynonymWindow:
            print "PDF"
 	   if self.op.endswith('.pdf'): os.system("python pdf2txt.py -o temp.txt " + self.op) 
 	   else: os.system("python pdf2txt.py -o temp.txt " + self.op + ".pdf")
-           results = ReadTextFile("temp.txt", self.finalwords)
+           results = ReadTextFile("temp.txt")
            #Delete the temporary file
            os.remove("temp.txt")
 
         #if txt file is selected
         if self.ftype.get() == 3:
-           results = ReadTextFile(self.op, self.finalwords)
+           results = ReadTextFile(self.op)
 
         #Write output to the excel file
         MakeExcel(self.excel, self.op, results, self.keyword.capitalize());
