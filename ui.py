@@ -1,3 +1,4 @@
+import os.path
 from Tkinter import *
 import tkFileDialog
 import urllib
@@ -8,6 +9,7 @@ from bs4 import BeautifulSoup
 import nltk 
 nltk.data.path.append('./nltk_data/')
 from nltk.corpus import wordnet as wn
+
 
 def checkbox(word):
     print "%r" % (word)
@@ -65,21 +67,28 @@ def ReadTextFile(FileName, keywords):
 #Function for writing results to an excel file
 def MakeExcel(excelfile, searchfile, results, keyword):
 
+    articleName = searchfile.split('/')
+    article = articleName[-1]
+
     #Determine file to write to
     if excelfile.endswith('.xls') :
        filename = excelfile
     else:
        filename = excelfile + '.xls'
 
-    if len(searchfile) > 20:
-	    article = searchfile[:18] + '...'
+    if len(article) > 20:
+	    sheetName = article[-18:] + '...'
     else:
-	    article = searchfile
+	    sheetName = article
 
     print "%r  %r" % (searchfile, article)
 
-    workbook = xlwt.Workbook(encoding = 'ascii')
-    worksheet = workbook.add_sheet(article)
+    if(os.path.isfile(excelfile)):
+	workbook = xlwt.Workbook(encoding = 'ascii')
+        worksheet = workbook.add_sheet(sheetName)
+    else:
+        workbook = xlwt.Workbook(encoding = 'ascii')
+        worksheet = workbook.add_sheet(sheetName)
 
     #Set font and style
     font = xlwt.Font()
@@ -100,7 +109,7 @@ def MakeExcel(excelfile, searchfile, results, keyword):
     style2.font = font2
 
     #Write the title of the file
-    worksheet.write_merge(0, 0, 0, 10, searchfile, style)
+    worksheet.write_merge(0, 0, 0, 10, article, style)
     worksheet.write(1, 1, 'Words', style2)
     worksheet.write(1, 2, 'Count', style2)
 
