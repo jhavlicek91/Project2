@@ -39,8 +39,8 @@ def ReadTextFile(FileName, keywords):
     #Go through each line in the text and search for every word in it
     for line in f:
         for w in keywords:
-            instances = re.findall(w, line)
-            amount = len(\\instances\\b)
+            instances = re.findall('\\b'+w+'\\b', line)
+            amount = len(instances)
             new_amount = amount + new_dict[w]
             new_dict[w] = new_amount
 
