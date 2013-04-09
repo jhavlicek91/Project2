@@ -3,6 +3,8 @@ from Tkinter import *
 import tkFileDialog
 import urllib
 import xlwt
+from xlutils.copy import copy
+import xlrd
 import os
 import re
 from bs4 import BeautifulSoup
@@ -84,8 +86,18 @@ def MakeExcel(excelfile, searchfile, results, keyword):
     print "%r  %r" % (searchfile, article)
 
     if(os.path.isfile(excelfile)):
-	workbook = xlwt.Workbook(encoding = 'ascii')
-        worksheet = workbook.add_sheet(sheetName)
+	tempbook = xlrd.open_workbook(excelfile, formatting_info=True)
+	sheetList = tempbook.sheet_names()
+	for sheet in sheetList:
+	    if sheet == sheetName:
+		if(sheetName.endswith('I'):
+		    sheetName = sheetName + "I"
+		else:
+		    sheetName = sheetName + "_I"
+		break
+	workbook = copy(tempbook)
+	worksheet = workbook.add_sheet(sheetName)
+	    
     else:
         workbook = xlwt.Workbook(encoding = 'ascii')
         worksheet = workbook.add_sheet(sheetName)
