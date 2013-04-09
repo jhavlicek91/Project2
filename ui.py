@@ -90,7 +90,7 @@ def MakeExcel(excelfile, searchfile, keyword, **results):
 	sheetList = tempbook.sheet_names()
 	for sheet in sheetList:
 	    if sheet == sheetName:
-		if(sheetName.endswith('I'):
+		if sheetName.endswith('I'):
 		    sheetName = sheetName + "I"
 		else:
 		    sheetName = sheetName + "_I"
