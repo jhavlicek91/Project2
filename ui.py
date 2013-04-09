@@ -10,13 +10,11 @@ import nltk
 nltk.data.path.append('./nltk_data/')
 from nltk.corpus import wordnet as wn
 
-finalwords = dict()
-
 def checkbox(word):
     print "%r" % (word)
 
 #Class for searching textfiles for keywords        
-def ReadTextFile(FileName):
+def ReadTextFile(FileName, **finalwords):
     #Get the text file to search through and open it
     f = file(FileName, 'r')
 
@@ -130,7 +128,6 @@ def MakeExcel(excelfile, searchfile, keyword, **results):
 
     #Write the rest of the cells
     column = 1
-    summ = 0
 
     for k in results: 
        index = 3 
@@ -249,7 +246,7 @@ class SynonymWindow:
         self.excel = excel
         self.op = op
         self.ftype = ftype
-        finalwords = dict()
+        self.finalwords = dict()
 
         #get different keywords from box
         self.keywords = keyword.split()
@@ -327,14 +324,14 @@ class SynonymWindow:
 
         #Add main word to list of words to be searched for
         for k in self.keywords:
-            finalwords[k] = list()
-            finalwords[k].append(k)
+            self.finalwords[k] = list()
+            self.finalwords[k].append(k)
             self.extra = self.otherEnter[k].get().split()
 
             #Add optional synonyms to the list
             for s in self.extra:
-                finalwords[k].append(s)
-            print "%r" % (finalwords[k])
+                self.finalwords[k].append(s)
+            print "%r" % (self.finalwords[k])
         
 
         #Go through words and check if the checkboxes have been selected
@@ -342,10 +339,10 @@ class SynonymWindow:
             for w in self.words[k]:
                print "%r  %r" % (w , self.checks[k][w].get() )
                if self.checks[k][w].get() == 1:
-                  finalwords[k].append(w)
+                  self.finalwords[k].append(w)
                   print "%r" % (w)
 
-        print "%r" % (finalwords)
+        print "%r" % (self.finalwords)
 
         #if html is selected
         if self.ftype.get() == 1:
@@ -357,7 +354,7 @@ class SynonymWindow:
             f = open('temp.txt','w')
             f.write(result.encode('utf8'))
             f.close()
-            results = ReadTextFile("temp.txt")
+            results = ReadTextFile("temp.txt", **self.finalwords)
             os.remove("temp.txt")
 
         #if pdf is selected
@@ -365,13 +362,13 @@ class SynonymWindow:
            print "PDF"
 	   if self.op.endswith('.pdf'): os.system("python pdf2txt.py -o temp.txt " + self.op) 
 	   else: os.system("python pdf2txt.py -o temp.txt " + self.op + ".pdf")
-           results = ReadTextFile("temp.txt")
+           results = ReadTextFile("temp.txt", **self.finalwords)
            #Delete the temporary file
            os.remove("temp.txt")
 
         #if txt file is selected
         if self.ftype.get() == 3:
-           results = ReadTextFile(self.op)
+           results = ReadTextFile(self.op, **self.finalwords)
 
         #Write output to the excel file
         MakeExcel(self.excel, self.op, self.keywords, **results);
