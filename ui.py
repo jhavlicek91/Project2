@@ -69,10 +69,6 @@ def ReadTextFile(FileName, **finalwords):
 #Function for writing results to an excel file
 def MakeExcel(excelfile, searchfile, keyword, **results):
 
-    #get only the article name if directory is also listed
-    articleName = searchfile.split('/')
-    article = articleName[-1]
-
     articleName = searchfile.split('/')
     article = articleName[-1]
 
@@ -87,9 +83,21 @@ def MakeExcel(excelfile, searchfile, keyword, **results):
     else:
 	    sheetName = article
 
+    print "%r  %r" % (searchfile, article)
+
     if(os.path.isfile(excelfile)):
-	workbook = xlwt.Workbook(encoding = 'ascii')
-        worksheet = workbook.add_sheet(sheetName)
+	tempbook = xlrd.open_workbook(excelfile, formatting_info=True)
+	sheetList = tempbook.sheet_names()
+	for sheet in sheetList:
+	    if sheet == sheetName:
+		if(sheetName.endswith('I'):
+		    sheetName = sheetName + "I"
+		else:
+		    sheetName = sheetName + "_I"
+		break
+	workbook = copy(tempbook)
+	worksheet = workbook.add_sheet(sheetName)
+	    
     else:
         workbook = xlwt.Workbook(encoding = 'ascii')
         worksheet = workbook.add_sheet(sheetName)
