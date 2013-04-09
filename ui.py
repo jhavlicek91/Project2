@@ -62,8 +62,6 @@ def ReadTextFile(FileName):
            comp[key] = complete[k][key] + complete[k][key2] 
         complete[k] = comp
 
-    print "%r" % (complete)
-    
     #Close the file you read
     f.close()
 
@@ -71,7 +69,7 @@ def ReadTextFile(FileName):
     return complete;
 
 #Function for writing results to an excel file
-def MakeExcel(excelfile, searchfile, results, keyword):
+def MakeExcel(excelfile, searchfile, keyword, **results):
 
     #get only the article name if directory is also listed
     articleName = searchfile.split('/')
@@ -90,8 +88,6 @@ def MakeExcel(excelfile, searchfile, results, keyword):
 	    sheetName = article[-18:] + '...'
     else:
 	    sheetName = article
-
-    print "%r  %r" % (searchfile, article)
 
     if(os.path.isfile(excelfile)):
 	workbook = xlwt.Workbook(encoding = 'ascii')
@@ -123,25 +119,33 @@ def MakeExcel(excelfile, searchfile, results, keyword):
     worksheet.write(1, 1, 'Words', style2)
     worksheet.write(1, 2, 'Count', style2)
 
-    #Write cells corresponding to the main word
+    #Write cells corresponding to the main words
+    worksheet.write(2, 0, "Main Term")
     index = 2
-    worksheet.write(index, 0, "Main Term")
-    worksheet.write(index, 1, keyword)
-    worksheet.write(index, 2, results[keyword])
+    column = 1
+    for k in results:
+        worksheet.write(index, column, k.capitalize())
+        worksheet.write(index, column + 1, results[k][k.capitalize()])
+        column += 3 
 
     #Write the rest of the cells
-    index = 3
+    column = 1
     summ = 0
-    for w in results.keys():
-         if w != keyword:
-             worksheet.write(index, 1, w)
-             worksheet.write(index, 2, results[w])
-             index += 1
-         summ += results[w]
 
-    #Write the sum of the keywords
-    worksheet.write(index + 1, 1, "Total")
-    worksheet.write(index + 1, 2, summ)
+    for k in results: 
+       index = 3 
+       summ = 0
+       for w in results[k]:
+          if w != k.capitalize():
+             worksheet.write(index, column, w)
+             worksheet.write(index, column + 1, results[k][w])
+             index += 1
+          summ += results[k][w]
+          
+       #Write the sum of the keywords
+       worksheet.write(index + 1, column, "Total")
+       worksheet.write(index + 1, column + 1, summ)
+       column += 3
 
     workbook.save(filename)
 
@@ -370,7 +374,7 @@ class SynonymWindow:
            results = ReadTextFile(self.op)
 
         #Write output to the excel file
-        MakeExcel(self.excel, self.op, results, self.keyword.capitalize());
+        MakeExcel(self.excel, self.op, self.keywords, **results);
 
 
 def main():
