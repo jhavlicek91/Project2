@@ -10,6 +10,8 @@ import nltk
 nltk.data.path.append('./nltk_data/')
 from nltk.corpus import wordnet as wn
 from synonymwindow import SynonymWindow
+from errorwindows import *
+
 
 class WindowOne:
 
@@ -93,8 +95,26 @@ class WindowOne:
         self.keyword = self.keywordEnter.get()
         self.excel = self.outputEnter.get()
         self.open = self.input.get()
+           
+        if self.open == "": 
+           e1 = Tk()
+           e1.title("Oops")
+           f = FileErrorWindow(e1)
 
-        #open new screen displaying synonyms
-        master1 = Tk()
-        master1.title("Synonyms")
-        w2 = SynonymWindow(master1, self.keyword, self.excel, self.open, self.ftype)
+        elif self.ftype.get() == 0: 
+           e2 = Tk()
+           e2.title("Oops")
+           radio = NoRadioWindow(e2)
+           
+        elif self.excel == "":
+           e3 = Tk()
+           e3.title("Ooops")
+           ex = ExcelErrorWindow(e3)
+        
+        else:
+           #open new screen displaying synonyms
+           master1 = Tk()
+           master1.title("Synonyms")
+           w2 = SynonymWindow(master1, self.keyword, self.excel, self.open, self.ftype)
+
+       
