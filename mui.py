@@ -90,7 +90,7 @@ def MakeExcel(excelfile, searchfile, results, keyword):
 	sheetList = tempbook.sheet_names()
 	for sheet in sheetList:
 	    if sheet == sheetName:
-		if(sheetName.endswith('I'):
+		if sheetName.endswith('I'):
 		    sheetName = sheetName + "I"
 		else:
 		    sheetName = sheetName + "_I"
@@ -141,9 +141,11 @@ def MakeExcel(excelfile, searchfile, results, keyword):
              index += 1
          summ += results[w]
 
+    colTotal = "SUM(C3:C" + str(index) + ")"
+
     #Write the sum of the keywords
     worksheet.write(index + 1, 1, "Total")
-    worksheet.write(index + 1, 2, summ)
+    worksheet.write(index + 1, 2, xlwt.Formula(colTotal))
 
     workbook.save(filename)
 
