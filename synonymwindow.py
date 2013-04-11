@@ -148,6 +148,8 @@ def MakeExcel(excelfile, searchfile, keyword, **results):
              worksheet.write(index, column + 1, results[k][w])
              index += 1
           summ += results[k][w]
+
+       colTotal = "SUM(C3:C" + str(index) + ")"
           
        #Write the sum of the keywords
        worksheet.write(index + 1, column, "Total")
