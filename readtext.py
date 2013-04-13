@@ -20,7 +20,10 @@ def ReadTextFile(FileName, **finalwords):
     
        for w in finalwords[k]: 
           #account for capital letters as well
-          cap = w.capitalize()   
+          if w[0].isupper(): 
+             cap = w.lower()
+          else:
+             cap = w.capitalize()   
           caps.append(cap)
 
        for c in caps:
@@ -43,10 +46,12 @@ def ReadTextFile(FileName, **finalwords):
                 new_amount = amount + complete[k][w]
                 complete[k][w] = new_amount
 
+    print "%r" % (complete)
     for k in complete:
         
         #sort dictionary
         sort = sorted(complete[k]) 
+        print "%r" %(sort)
         
         #create a new dictionary without both capital and non capital letters
         comp = dict()
@@ -56,6 +61,7 @@ def ReadTextFile(FileName, **finalwords):
            key2 = sort[i + halfway]
            comp[key] = complete[k][key] + complete[k][key2] 
         complete[k] = comp
+        print "%r" % (complete[k])
 
     #Close the file you read
     f.close()

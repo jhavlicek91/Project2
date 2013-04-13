@@ -45,6 +45,7 @@ class SynonymWindow:
             for si in self.syns:
                for l in si.lemmas:
                   self.dictionary[k].append(l.name)
+                  
 
         #get rid of duplicates in list of synonyms
         for k in self.keywords:
