@@ -1,0 +1,57 @@
+import os.path
+import urllib
+import xlwt
+import xlrd
+from xlutils.copy import copy
+import os
+import re
+from bs4 import BeautifulSoup
+import nltk 
+nltk.data.path.append('./nltk_data/')
+from nltk.corpus import wordnet as wn
+from outputexcel import *
+from readtext import *
+
+
+def pdf(fil, **keywords):
+    if fil.endswith('.pdf'): 
+       os.system("python pdf2txt.py -o temp.txt " + fil) 
+    else: 
+	   os.system("python pdf2txt.py -o temp.txt " + fil + ".pdf")
+    results = ReadTextFile("temp.txt", **keywords)
+    #Delete the temporary file
+    os.remove("temp.txt")
+
+    return results
+    
+def html(fil, **keywords):
+    if fil.startswith("http"):
+	   sock = urllib.urlopen(fil)
+    else:
+	   sock = urllib.urlopen("http://" + fil + "/")
+    htmlsource = sock.read()  
+    sock.close()   
+    soup = BeautifulSoup(htmlsource)
+    result = soup.get_text()
+    f = open('temp.txt','w')
+    f.write(result.encode('utf8'))
+    f.close()
+    results = ReadTextFile("temp.txt", **keywords)
+    os.remove("temp.txt")
+
+    return results
+
+
+def DFS(phile, **keywords):
+    #check if it is a file or directory
+    if os.isdir(phile):
+       #go through every file in the directory
+       for f in os.listdir(phile, **keywords):
+          DFS(f)
+    elif os.isfile(phile):
+    
+       if phile.endswith('.pdf'):
+          results = pdf(phile, **keywords) 
+
+       elif phile.endswith('.txt'):
+          results = ReadTextFile(phile, **keywords)

@@ -11,152 +11,12 @@ from bs4 import BeautifulSoup
 import nltk 
 nltk.data.path.append('./nltk_data/')
 from nltk.corpus import wordnet as wn
+from outputexcel import *
+from readtext import *
+from utilities import *
 
 def makeLambda(f, *args):
-	return lambda: f(*args)
-
-#Class for searching textfiles for keywords        
-def ReadTextFile(FileName, **finalwords):
-    #Get the text file to search through and open it
-    f = file(FileName, 'r')
-
-    for k in finalwords:
-       caps = list()
-    
-       for w in finalwords[k]: 
-          #account for capital letters as well
-          cap = w.capitalize()   
-          caps.append(cap)
-
-       for c in caps:
-          finalwords[k].append(c)
-
-    #Create dictionary that has each keyword and the 
-    #number of times it appeared in the file
-    complete = dict()
-    for k in finalwords:
-        complete[k] = dict()
-        for w in finalwords[k]:
-            complete[k][w] = 0
-
-    #Go through each line in the text and search for every word in it
-    for line in f:
-        for k in complete:
-            for w in complete[k]:
-                instances = re.findall('\\b'+w+'\\b', line)
-                amount = len(instances)
-                new_amount = amount + complete[k][w]
-                complete[k][w] = new_amount
-
-    for k in complete:
-        
-        #sort dictionary
-        sort = sorted(complete[k]) 
-        
-        #create a new dictionary without both capital and non capital letters
-        comp = dict()
-        halfway = len(complete[k]) / 2;
-        for i in range(0, halfway):
-           key = sort[i]
-           key2 = sort[i + halfway]
-           comp[key] = complete[k][key] + complete[k][key2] 
-        complete[k] = comp
-
-    #Close the file you read
-    f.close()
-
-    #need to return a dictionary of dictionaries
-    return complete;
-
-#Function for writing results to an excel file
-def MakeExcel(excelfile, searchfile, keyword, **results):
-
-    articleName = searchfile.split('/')
-    article = articleName[-1]
-
-    #Determine file to write to
-    if excelfile.endswith('.xls') :
-       filename = excelfile
-    else:
-       filename = excelfile + '.xls'
-
-    if len(article) > 20:
-	    sheetName = article[-18:] + '...'
-    else:
-	    sheetName = article
-
-    print "%r  %r" % (searchfile, article)
-
-    if(os.path.isfile(excelfile)):
-	tempbook = xlrd.open_workbook(excelfile, formatting_info=True)
-	sheetList = tempbook.sheet_names()
-	for sheet in sheetList:
-	    if sheet == sheetName:
-		if sheetName.endswith('I'):
-		    sheetName = sheetName + "I"
-		else:
-		    sheetName = sheetName + "_I"
-		break
-	workbook = copy(tempbook)
-	worksheet = workbook.add_sheet(sheetName)
-
-    else:
-        workbook = xlwt.Workbook(encoding = 'ascii')
-        worksheet = workbook.add_sheet(sheetName)
-
-    #Set font and style
-    font = xlwt.Font()
-    font.bold = True
-    font.height = 0x010D
-    font.underline = True
-    style = xlwt.XFStyle()
-    style.font = font
-
-    worksheet.col(0).width = 3333
-    worksheet.row(0).height = 400
-
-    #Set font and style of file
-    font2 = xlwt.Font()
-    font2.bold = True
-    font2.underline = True
-    style2 = xlwt.XFStyle()
-    style2.font = font2
-
-    #Write the title of the file
-    worksheet.write_merge(0, 0, 0, 10, article, style)
-    worksheet.write(1, 1, 'Words', style2)
-    worksheet.write(1, 2, 'Count', style2)
-
-    #Write cells corresponding to the main words
-    worksheet.write(2, 0, "Main Term")
-    index = 2
-    column = 1
-    for k in results:
-        worksheet.write(index, column, k.capitalize())
-        worksheet.write(index, column + 1, results[k][k.capitalize()])
-        column += 3 
-
-    #Write the rest of the cells
-    column = 1
-
-    for k in results: 
-       index = 3 
-       summ = 0
-       for w in results[k]:
-          if w != k.capitalize():
-             worksheet.write(index, column, w)
-             worksheet.write(index, column + 1, results[k][w])
-             index += 1
-          summ += results[k][w]
-
-       colTotal = "SUM(C3:C" + str(index) + ")"
-          
-       #Write the sum of the keywords
-       worksheet.write(index + 1, column, "Total")
-       worksheet.write(index + 1, column + 1, summ)
-       column += 3
-
-    workbook.save(filename)
+	return lambda: f(*args) 
 
 class SynonymWindow:
     def __init__(self, parent, keyword, excel, op, ftype):
@@ -265,37 +125,23 @@ class SynonymWindow:
 
         print "%r" % (self.finalwords)
 
+        #if file is selected, depth first search through file/directory
+        #DFS(self.op)
+
         #if html is selected
         if self.ftype.get() == 1:
-           if self.op.startswith("http"):
-	      sock = urllib.urlopen(self.op)
-	   else:
-	      sock = urllib.urlopen("http://" + self.op + "/")
-	   htmlsource = sock.read()
-	   sock.close()
-	   soup = BeautifulSoup(htmlsource)
-	   result = soup.get_text()
-	   f = open('temp.txt','w')
-	   f.write(result.encode('utf8'))
-	   f.close()
-	   results = ReadTextFile("temp.txt", **self.finalwords)
-	   os.remove("temp.txt")
+           self.results = self.html(self.op, **self.finalwords)       
 
         #if pdf is selected
         if self.ftype.get() == 2:
-           print "PDF"
-	   if self.op.endswith('.pdf'): os.system("python pdf2txt.py -o temp.txt " + self.op) 
-	   else: os.system("python pdf2txt.py -o temp.txt " + self.op + ".pdf")
-           results = ReadTextFile("temp.txt", **self.finalwords)
-           #Delete the temporary file
-           os.remove("temp.txt")
-
+           self.results = pdf(self.op, **self.finalwords)
+           
         #if txt file is selected
         if self.ftype.get() == 3:
-           results = ReadTextFile(self.op, **self.finalwords)
+           self.results = ReadTextFile(self.op, **self.finalwords)
 
         #Write output to the excel file
-        MakeExcel(self.excel, self.op, self.keywords, **results);
+        MakeExcel(self.excel, self.op, self.keywords, **self.results);
 
     def checkbox(self, k, w):
        print "%r %r" % (k, w)
