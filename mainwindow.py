@@ -41,17 +41,13 @@ class WindowOne:
         self.inputdialog.grid(row = 1, column = 2 )
 
         self.ftype = IntVar() 
+        #Add FILE Radio Button
+        self.FILEbutton = Radiobutton(frame, text = "FILE", fg = "black", variable = self.ftype, value = 1)
+        self.FILEbutton.grid(row = 2,column = 0,sticky = E)
+
         #Add HTML Radio Button
-        self.HTMLbutton = Radiobutton(frame, text = "HTML", fg = "black", variable = self.ftype, value = 1)
-        self.HTMLbutton.grid(row = 2,column = 0,sticky = E)
-
-        #Add PDF Radio Button
-        self.PDFbutton = Radiobutton(frame, text = "PDF ", fg = "black", variable = self.ftype, value = 2 )
-        self.PDFbutton.grid(row = 2, column = 2)
-
-        #Add text Radio button
-        self.TXTbutton = Radiobutton(frame, text = "TXT", fg = "black", variable = self.ftype, value = 3)
-        self.TXTbutton.grid(row = 2,column = 3)
+        self.HTMLbutton = Radiobutton(frame, text = "HTML", fg = "black", variable = self.ftype, value = 2 )
+        self.HTMLbutton.grid(row = 2, column = 2)
 
         #Add keyword heading 
         self.head1 = Label(frame, text = "Keywords:")

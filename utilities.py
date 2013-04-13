@@ -42,16 +42,27 @@ def html(fil, **keywords):
     return results
 
 
-def DFS(phile, **keywords):
+def DFS(phile, excel, keys, **keywords):
     #check if it is a file or directory
-    if os.isdir(phile):
-       #go through every file in the directory
-       for f in os.listdir(phile, **keywords):
-          DFS(f)
-    elif os.isfile(phile):
+    print "DFS initiated"
     
+    if os.path.isdir(phile):
+    
+       print "%r is a directory" % (phile)  
+       #go through every file in the directory
+       for f in os.listdir(phile):
+          print "%r" % (f)
+          DFS(phile + "/" + f, excel, keys, **keywords)
+          
+    else:
+
+       print "%r is a file" % (phile)
        if phile.endswith('.pdf'):
           results = pdf(phile, **keywords) 
+          MakeExcel(excel, phile, keys, **results)
 
        elif phile.endswith('.txt'):
           results = ReadTextFile(phile, **keywords)
+          MakeExcel(excel, phile, keys, **results)
+
+          

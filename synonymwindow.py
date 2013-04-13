@@ -126,22 +126,14 @@ class SynonymWindow:
         print "%r" % (self.finalwords)
 
         #if file is selected, depth first search through file/directory
-        #DFS(self.op)
+        if self.ftype.get() == 1:   
+           DFS(self.op, self.excel, self.keywords, **self.finalwords)
 
         #if html is selected
-        if self.ftype.get() == 1:
-           self.results = self.html(self.op, **self.finalwords)       
-
-        #if pdf is selected
         if self.ftype.get() == 2:
-           self.results = pdf(self.op, **self.finalwords)
-           
-        #if txt file is selected
-        if self.ftype.get() == 3:
-           self.results = ReadTextFile(self.op, **self.finalwords)
-
-        #Write output to the excel file
-        MakeExcel(self.excel, self.op, self.keywords, **self.results);
+           self.results = html(self.op, **self.finalwords)       
+           #Write output to the excel file
+           MakeExcel(self.excel, self.op, self.keywords, **self.results);
 
     def checkbox(self, k, w):
        print "%r %r" % (k, w)
