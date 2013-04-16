@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 import nltk 
 nltk.data.path.append('./nltk_data/')
 from nltk.corpus import wordnet as wn
-from synonymwindow import SynonymWindow
+from synonymwindow import *
 from errorwindows import *
 
 
@@ -111,6 +111,13 @@ class WindowOne:
            #open new screen displaying synonyms
            master1 = Tk()
            master1.title("Synonyms")
-           w2 = SynonymWindow(master1, self.keyword, self.excel, self.open, self.ftype)
+           w2 = SynonymWindow(self.parent, master1,  self.keyword, self.excel, self.open, self.ftype)
+
+    def CloseAndOpen(self):
+        #close window when done
+        self.parent.destroy() 
+        master = Tk()
+        master.title("Project 2")
+        w1 = WindowOne(master)  
 
        

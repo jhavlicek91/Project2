@@ -19,7 +19,10 @@ def makeLambda(f, *args):
 	return lambda: f(*args) 
 
 class SynonymWindow:
-    def __init__(self, parent, keyword, excel, op, ftype):
+    def __init__(self, lastw, parent, keyword, excel, op, ftype):
+
+        self.lastw = lastw
+        self.parent = parent
         frame = Frame(parent)
         frame.pack()
         self.keyword = keyword 
@@ -135,6 +138,10 @@ class SynonymWindow:
            self.results = html(self.op, **self.finalwords)       
            #Write output to the excel file
            MakeExcel(self.excel, self.op, self.keywords, **self.results);
+
+        #close window when done
+        self.parent.destroy()
+        self.lastw.destroy()
 
     def checkbox(self, k, w):
        print "%r %r" % (k, w)
