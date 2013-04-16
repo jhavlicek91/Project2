@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 import nltk 
 nltk.data.path.append('./nltk_data/')
 from nltk.corpus import wordnet as wn
-from synonymwindow import *
+from synonymwindow import SynonymWindow
 from errorwindows import *
 
 

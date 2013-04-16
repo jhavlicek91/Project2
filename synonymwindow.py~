@@ -141,7 +141,7 @@ class SynonymWindow:
 
         #close window when done
         self.parent.destroy()
-        self.lastw.destroy()
+        self.lastw.CloseAndOpen()
 
     def checkbox(self, k, w):
        print "%r %r" % (k, w)
