@@ -19,7 +19,7 @@ def makeLambda(f, *args):
 	return lambda: f(*args) 
 
 class SynonymWindow:
-    def __init__(self, lastw, parent, keyword, excel, op, ftype):
+    def __init__(self, lastw, parent, keyword, excel, op, ftype, user, passw):
 
         self.lastw = lastw
         self.parent = parent
@@ -29,6 +29,8 @@ class SynonymWindow:
         self.excel = excel
         self.op = op
         self.ftype = ftype
+        self.user = user
+        self.passw = passw
         self.finalwords = dict()
 
         #get different keywords from box

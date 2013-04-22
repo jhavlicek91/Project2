@@ -28,7 +28,7 @@ class WindowOne:
         #Add file text box
         fil = StringVar()
         self.input = Entry(frame, width = 35, textvariable = fil)
-        self.input.grid(row=1,column=0)
+        self.input.grid(row = 1,column = 0)
 
         def GetFileName():
             # get filename
@@ -36,7 +36,7 @@ class WindowOne:
             print "%r" % (filename)
             fil.set(filename)
 
-        #Add file Dilog box for the file to open
+        #Add file Dialog box for the file to open
         self.inputdialog = Button(frame, text = "File", fg = "black", command = GetFileName )
         self.inputdialog.grid(row = 1, column = 2 )
 
@@ -49,17 +49,33 @@ class WindowOne:
         self.HTMLbutton = Radiobutton(frame, text = "HTML", fg = "black", variable = self.ftype, value = 2 )
         self.HTMLbutton.grid(row = 2, column = 2)
 
+        #add username label
+        self.usertext = Label(frame, text = "Username and Password (If needed)")
+        self.usertext.grid(row = 4, column = 0, sticky = W)
+
+        #add username box
+        #self.usert = Label(frame, text = "Username: ")
+        #self.usert.grid(row = 5, column = 0, sticky = W)
+
+        self.user = Entry(frame, width = 20)
+        self.user.grid(row = 5, column = 0, sticky = W)
+
+        self.passw = Entry(frame, width = 20)
+        self.passw.grid(row = 6, column = 0, sticky = W)
+
+   
+
         #Add keyword heading 
         self.head1 = Label(frame, text = "Keywords:")
-        self.head1.grid(row = 4,column = 0,sticky = W)
+        self.head1.grid(row = 8, column = 0, sticky = W)
 
         #Add keyword textbox
         self.keywordEnter = Entry(frame, width = 35)
-        self.keywordEnter.grid(row = 5,column = 0)
+        self.keywordEnter.grid(row = 9, column = 0)
 
         #Add excel heading
         self.head2 = Label(frame, text = "Output Excel File:")
-        self.head2.grid(row = 6,column = 0, sticky = W)
+        self.head2.grid(row = 10, column = 0, sticky = W)
 
 	    #Add excel work book page
         #self.head3 = Label(frame, text = "Worksheet Title:").grid(row = 8, column = 0, sticky = W)
@@ -76,15 +92,16 @@ class WindowOne:
         #add excel text box
         ex = StringVar()
         self.outputEnter = Entry(frame, width = 35, textvariable = ex)
-        self.outputEnter.grid(row = 7,column = 0)
+        self.outputEnter.grid(row = 11,column = 0)
 
         #Add file Dilog box for the file to open
         self.outputdialog = Button(frame, text = "File", fg = "black", command = GetFileName2 )
-        self.outputdialog.grid(row = 7, column = 2 )
+        self.outputdialog.grid(row = 11, column = 2 )
 
         #Add go button
         self.GObutton = Button(frame,text = "Go!", fg = "black", command = self.Go )
-        self.GObutton.grid(row = 9,column = 6)
+        self.GObutton.grid(row = 12,column = 6)
+
 
     #Function for when go is clicked
     def Go(self):
@@ -111,7 +128,7 @@ class WindowOne:
            #open new screen displaying synonyms
            master1 = Tk()
            master1.title("Synonyms")
-           w2 = SynonymWindow(self.parent, master1,  self.keyword, self.excel, self.open, self.ftype)
+           w2 = SynonymWindow(self.parent, master1,  self.keyword, self.excel, self.open, self.ftype, self.user, self.passw)
 
     def CloseAndOpen(self):
         #close window when done
