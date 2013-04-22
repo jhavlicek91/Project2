@@ -29,7 +29,7 @@ def MakeExcel(excelfile, searchfile, keyword, **results):
 
     print "%r  %r" % (searchfile, article)
 
-    if(os.path.isfile(excelfile)):
+    if(os.path.isfile(filename)):
         print "%r exists" % (excelfile)
 	tempbook = xlrd.open_workbook(excelfile, formatting_info = True)
 	sheetList = tempbook.sheet_names()
@@ -74,6 +74,7 @@ def MakeExcel(excelfile, searchfile, keyword, **results):
     worksheet.write(2, 0, "Main Term")
     index = 2
     column = 1
+    maxRow = index;
     for k in results:
         worksheet.write(index, column, k.capitalize())
         worksheet.write(index, column + 1, results[k][k.capitalize()])
@@ -98,5 +99,10 @@ def MakeExcel(excelfile, searchfile, keyword, **results):
        worksheet.write(index + 1, column, "Total")
        worksheet.write(index + 1, column + 1, summ)
        column += 3
+
+       #keep track of the farthest row down used
+       maxRow = max(maxRow, index + 1)
+
+    worksheet.write(0, 11, maxRow)
 
     workbook.save(filename)

@@ -32,7 +32,7 @@ class SynonymWindow:
         self.finalwords = dict()
 
         #get different keywords from box
-        self.keywords = keyword.split()
+        self.keywords = keyword.split(",")
         self.dictionary = dict()
         
         self.words = dict()
