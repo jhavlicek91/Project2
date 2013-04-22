@@ -58,7 +58,8 @@ def DFS(phile, excel, keys, **keywords):
 
        print "%r is a file" % (phile)
        if phile.endswith('.pdf'):
-          results = pdf(phile, **keywords) 
+          results = pdf(phile, **keywords)
+          print "About to make excel file"
           MakeExcel(excel, phile, keys, **results)
 
        elif phile.endswith('.txt'):
