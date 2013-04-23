@@ -137,7 +137,7 @@ class SynonymWindow:
 
         #if html is selected
         if self.ftype.get() == 2:
-           self.results = html(self.op, **self.finalwords)       
+           self.results = html(self.op, self.user, self.passw **self.finalwords)       
            #Write output to the excel file
            MakeExcel(self.excel, self.op, self.keywords, **self.results);
 

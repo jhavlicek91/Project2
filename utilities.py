@@ -24,7 +24,7 @@ def pdf(fil, **keywords):
 
     return results
     
-def html(fil, **keywords):
+def html(user, passw, fil, **keywords):
     if fil.startswith("http"):
 	   sock = urllib.urlopen(fil)
     else:
