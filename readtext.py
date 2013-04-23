@@ -12,29 +12,32 @@ import nltk
 
 #Class for searching textfiles for keywords        
 def ReadTextFile(FileName, **finalwords):
+    print "%r" % (finalwords)
+     
+    synonyms = finalwords
     #Get the text file to search through and open it
     f = file(FileName, 'r')
 
-    for k in finalwords:
+    for k in synonyms:
        caps = list()
     
-       for w in finalwords[k]: 
+       for w in synonyms[k]: 
           #account for capital letters as well
           if w[0].isupper(): 
              cap = w.lower()
           else:
-             cap = w.capitalize()   
+             cap = w.title()   
           caps.append(cap)
 
        for c in caps:
-          finalwords[k].append(c)
+          synonyms[k].append(c)
 
     #Create dictionary that has each keyword and the 
     #number of times it appeared in the file
     complete = dict()
-    for k in finalwords:
+    for k in synonyms:
         complete[k] = dict()
-        for w in finalwords[k]:
+        for w in synonyms[k]:
             complete[k][w] = 0
 
     #Go through each line in the text and search for every word in it
