@@ -132,11 +132,11 @@ class SynonymWindow:
         print "%r" % (self.finalwords)
 
         #if file is selected, depth first search through file/directory
-        if self.ftype.get() == 1:   
+        if self.ftype.get() == 1 or self.ftype.get() == 2:   
            DFS(self.op, self.excel, self.keywords, **self.finalwords)
 
         #if html is selected
-        if self.ftype.get() == 2:
+        if self.ftype.get() == 3:
            self.results = html(self.op, self.user, self.passw **self.finalwords)       
            #Write output to the excel file
            MakeExcel(self.excel, self.op, self.keywords, **self.results);

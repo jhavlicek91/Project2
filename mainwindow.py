@@ -32,21 +32,28 @@ class WindowOne:
 
         def GetFileName():
             # get filename
-            filename = tkFileDialog.askopenfilename()
+            if self.ftype.get() == 1:
+               filename = tkFileDialog.askdirectory()
+            elif self.ftype.get() == 2:
+               filename = tkFileDialog.askopenfilename()
             print "%r" % (filename)
             fil.set(filename)
 
         #Add file Dialog box for the file to open
         self.inputdialog = Button(frame, text = "File", fg = "black", command = GetFileName )
-        self.inputdialog.grid(row = 1, column = 2 )
+        self.inputdialog.grid(row = 1, column = 1 )
 
         self.ftype = IntVar() 
         #Add FILE Radio Button
         self.FILEbutton = Radiobutton(frame, text = "FILE", fg = "black", variable = self.ftype, value = 1)
-        self.FILEbutton.grid(row = 2,column = 0,sticky = E)
+        self.FILEbutton.grid(row = 2,column = 0, sticky = E)
+
+        #Add Directory Radio Button
+        self.dirButton = Radiobutton(frame, text = "Directory", fg = "black", variable = self.ftype, value = 2)
+        self.dirButton.grid(row = 2, column = 1)
 
         #Add HTML Radio Button
-        self.HTMLbutton = Radiobutton(frame, text = "HTML", fg = "black", variable = self.ftype, value = 2 )
+        self.HTMLbutton = Radiobutton(frame, text = "HTML", fg = "black", variable = self.ftype, value = 3 )
         self.HTMLbutton.grid(row = 2, column = 2)
 
         #add username label
@@ -62,8 +69,6 @@ class WindowOne:
 
         self.passw = Entry(frame, width = 20)
         self.passw.grid(row = 6, column = 0, sticky = W)
-
-   
 
         #Add keyword heading 
         self.head1 = Label(frame, text = "Keywords:")
@@ -96,11 +101,11 @@ class WindowOne:
 
         #Add file Dilog box for the file to open
         self.outputdialog = Button(frame, text = "File", fg = "black", command = GetFileName2 )
-        self.outputdialog.grid(row = 11, column = 2 )
+        self.outputdialog.grid(row = 11, column = 1 )
 
         #Add go button
         self.GObutton = Button(frame,text = "Go!", fg = "black", command = self.Go )
-        self.GObutton.grid(row = 12,column = 6)
+        self.GObutton.grid(row = 12,column = 2)
 
 
     #Function for when go is clicked
@@ -128,7 +133,14 @@ class WindowOne:
            #open new screen displaying synonyms
            master1 = Tk()
            master1.title("Synonyms")
-           w2 = SynonymWindow(self.parent, master1,  self.keyword, self.excel, self.open, self.ftype, self.user, self.passw)
+
+           #Format excel file name
+           if self.excel.endswith('.xls') :
+              filename = self.excel
+           else:
+              filename = self.excel + '.xls'
+           
+           w2 = SynonymWindow(self.parent, master1,  self.keyword, filename, self.open, self.ftype, self.user, self.passw)
 
     def CloseAndOpen(self):
         #close window when done
