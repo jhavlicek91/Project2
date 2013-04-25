@@ -37,9 +37,9 @@ def pdf(fil, **keywords):
     
 def html(user, passw, fil, **keywords):
     if fil.startswith("http"):
-	   sock = urllib.urlopen(fil)
+       sock = urllib.urlopen(fil)
     else:
-	   sock = urllib.urlopen("http://" + fil + "/")
+       sock = urllib.urlopen("http://" + fil + "/")
     htmlsource = sock.read()  
     sock.close()   
     soup = BeautifulSoup(htmlsource)
