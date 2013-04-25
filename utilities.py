@@ -15,17 +15,20 @@ from readtext import *
 
 def pdf(fil, **keywords):
 
+    #If operating system is windows
     if os.name == "nt":
        if fil.endswith('.pdf'): 
           os.system("pdf2txt.py -o temp.txt " + fil) 
        else: 
           os.system("pdf2txt.py -o temp.txt " + fil + ".pdf")
 
+    #if operating system is linux or mac
     elif os.name == "posix":
         if fil.endswith('.pdf'): 
           os.system("python pdf2txt.py -o temp.txt " + fil) 
         else: 
           os.system("python pdf2txt.py -o temp.txt " + fil + ".pdf")
+
     results = ReadTextFile("temp.txt", **keywords)
     #Delete the temporary file
     os.remove("temp.txt")
