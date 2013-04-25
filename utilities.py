@@ -21,10 +21,10 @@ def pdf(fil, **keywords):
        else: 
           os.system("pdf2txt.py -o temp.txt " + fil + ".pdf")
 
-    elif: os.name == "posix":
+    elif os.name == "posix":
         if fil.endswith('.pdf'): 
           os.system("python pdf2txt.py -o temp.txt " + fil) 
-       else: 
+        else: 
           os.system("python pdf2txt.py -o temp.txt " + fil + ".pdf")
     results = ReadTextFile("temp.txt", **keywords)
     #Delete the temporary file

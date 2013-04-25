@@ -30,8 +30,7 @@ def MakeExcel(excelfile, searchfile, keyword, **results):
     print "%r  %r" % (searchfile, article)
 
     if(os.path.isfile(filename)):
-        print "%r exists" % (excelfile)
-	tempbook = xlrd.open_workbook(excelfile, formatting_info = True)
+	tempbook = xlrd.open_workbook(filename, formatting_info = True)
 	sheetList = tempbook.sheet_names()
 	for sheet in sheetList:
 	    if sheet == sheetName:
