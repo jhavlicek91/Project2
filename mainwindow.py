@@ -33,9 +33,9 @@ class WindowOne:
         def GetFileName():
             # get filename
             if self.ftype.get() == 1:
-               filename = tkFileDialog.askdirectory()
-            elif self.ftype.get() == 2:
                filename = tkFileDialog.askopenfilename()
+            elif self.ftype.get() == 2:
+               filename = tkFileDialog.askdirectory()
             print "%r" % (filename)
             fil.set(filename)
 

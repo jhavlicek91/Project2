@@ -14,10 +14,18 @@ from readtext import *
 
 
 def pdf(fil, **keywords):
-    if fil.endswith('.pdf'): 
-       os.system("python pdf2txt.py -o temp.txt " + fil) 
-    else: 
-	   os.system("python pdf2txt.py -o temp.txt " + fil + ".pdf")
+
+    if os.name == "nt":
+       if fil.endswith('.pdf'): 
+          os.system("pdf2txt.py -o temp.txt " + fil) 
+       else: 
+          os.system("pdf2txt.py -o temp.txt " + fil + ".pdf")
+
+    elif: os.name == "posix":
+        if fil.endswith('.pdf'): 
+          os.system("python pdf2txt.py -o temp.txt " + fil) 
+       else: 
+          os.system("python pdf2txt.py -o temp.txt " + fil + ".pdf")
     results = ReadTextFile("temp.txt", **keywords)
     #Delete the temporary file
     os.remove("temp.txt")
