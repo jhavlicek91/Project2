@@ -11,40 +11,40 @@ from bs4 import BeautifulSoup
 import nltk 
 
 #Function for writing results to an excel file
-def MakeExcel(excelfile, searchfile, keyword, **results):
-
+def MakeExcel(excelfile, searchfile, keyword, **results, isFirst, isLast):
+    
     articleName = searchfile.split('/')
     article = articleName[-1]
+    if(isFirst):
+        #Determine file to write to
+        if excelfile.endswith('.xls') :
+           filename = excelfile
+        else:
+           filename = excelfile + '.xls'
+    
+        if len(article) > 20:
+    	    sheetName = article[-18:] + '...'
+        else:
+	        sheetName = article
 
-    #Determine file to write to
-    if excelfile.endswith('.xls') :
-       filename = excelfile
-    else:
-       filename = excelfile + '.xls'
+        print "%r  %r" % (searchfile, article)
 
-    if len(article) > 20:
-	    sheetName = article[-18:] + '...'
-    else:
-	    sheetName = article
+        if(os.path.isfile(filename)):
+	    tempbook = xlrd.open_workbook(filename, formatting_info = True)
+    	    sheetList = tempbook.sheet_names()
+    	    for sheet in sheetList:
+    	        if sheet == sheetName:
+		    if sheetName.endswith('I'):
+		        sheetName = sheetName + "I"
+		    else:
+		        sheetName = sheetName + "_I"
+		    break
+	    workbook = copy(tempbook)
+	    worksheet = workbook.add_sheet(sheetName)
 
-    print "%r  %r" % (searchfile, article)
-
-    if(os.path.isfile(filename)):
-	tempbook = xlrd.open_workbook(filename, formatting_info = True)
-	sheetList = tempbook.sheet_names()
-	for sheet in sheetList:
-	    if sheet == sheetName:
-		if sheetName.endswith('I'):
-		    sheetName = sheetName + "I"
-		else:
-		    sheetName = sheetName + "_I"
-		break
-	workbook = copy(tempbook)
-	worksheet = workbook.add_sheet(sheetName)
-
-    else:
-        workbook = xlwt.Workbook(encoding = 'ascii')
-        worksheet = workbook.add_sheet(sheetName)
+        else:
+            workbook = xlwt.Workbook(encoding = 'ascii')
+            worksheet = workbook.add_sheet(sheetName)
 
     #Set font and style
     font = xlwt.Font()
@@ -66,14 +66,13 @@ def MakeExcel(excelfile, searchfile, keyword, **results):
 
     #Write the title of the file
     worksheet.write_merge(0, 0, 0, 10, article, style)
-    worksheet.write(1, 1, 'Words', style2)
-    worksheet.write(1, 2, 'Count', style2)
+    worksheet.write(index, 1, 'Words', style2)
+    worksheet.write(index, 2, 'Count', style2)
 
     #Write cells corresponding to the main words
     worksheet.write(2, 0, "Main Term")
-    index = 2
+    index += 1
     column = 1
-    maxRow = index;
     for k in results:
         worksheet.write(index, column, k.capitalize())
         worksheet.write(index, column + 1, results[k][k.capitalize()])
@@ -83,7 +82,7 @@ def MakeExcel(excelfile, searchfile, keyword, **results):
     column = 1
 
     for k in results: 
-       index = 3 
+       index += 1 
        summ = 0
        for w in results[k]:
           if w != k.capitalize():
@@ -91,17 +90,13 @@ def MakeExcel(excelfile, searchfile, keyword, **results):
              worksheet.write(index, column + 1, results[k][w])
              index += 1
           summ += results[k][w]
-
-       colTotal = "SUM(C3:C" + str(index) + ")"
           
        #Write the sum of the keywords
        worksheet.write(index + 1, column, "Total")
        worksheet.write(index + 1, column + 1, summ)
        column += 3
 
-       #keep track of the farthest row down used
-       maxRow = max(maxRow, index + 1)
+    index += 2
 
-    worksheet.write(0, 11, maxRow)
-
-    workbook.save(filename)
+    if isEnd:
+        workbook.save(filename)
