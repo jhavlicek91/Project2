@@ -6,6 +6,8 @@ from xlutils.copy import copy
 import os
 import re
 from bs4 import BeautifulSoup
+from urllib import urlencode, urlopen                                       
+import urllib2    
 import nltk 
 nltk.data.path.append('./nltk_data/')
 from nltk.corpus import wordnet as wn
@@ -36,17 +38,34 @@ def pdf(fil, **keywords):
     return results
     
 def html(user, passw, fil, **keywords):
-    if fil.startswith("http"):
-       sock = urllib.urlopen(fil)
-    else:
-       sock = urllib.urlopen("http://" + fil + "/")
-    htmlsource = sock.read()  
-    sock.close()   
-    soup = BeautifulSoup(htmlsource)
-    result = soup.get_text()
-    f = open('temp.txt','w')
-    f.write(result.encode('utf8'))
-    f.close()
+
+    if passw != '' and user != '':
+       data = {                                                                        
+            'id': user,                                                          
+            'PIN': passw,                                                        
+            'submit': 'Request Access',                                          
+            'wcuirs_uri':fil 
+       }
+
+       response = urlopen(fil, urlencode(data))                           
+                              
+       f = open('temp.txt', 'w')
+       f.write(response.read())
+       f.close()
+       
+    else: 
+
+       if fil.startswith("http"):
+          sock = urllib.urlopen(fil)
+       else:
+          sock = urllib.urlopen("http://" + fil + "/")
+       htmlsource = sock.read()  
+       sock.close()   
+       soup = BeautifulSoup(htmlsource)
+       result = soup.get_text()
+       f = open('temp.txt','w')
+       f.write(result.encode('utf8'))
+       f.close()
     results = ReadTextFile("temp.txt", **keywords)
     os.remove("temp.txt")
 

@@ -1,21 +1,15 @@
-
-import urllib import urlopen, urlencode                                           
-import urllib2                                                                  
-
-myId = 'xxxxxxxx'                                                              
-myPin = 'xxxxxxx'                                                                
-
+                                                                
 data = {                                                                        
-            'id':myId,                                                          
-            'PIN':myPin,                                                        
+            'id':user,                                                          
+            'PIN':passw,                                                        
             'submit':'Request Access',                                          
-            'wcuirs_uri':'https://cf.wcu.edu/busafrs/catcard/idsearch.cfm'      
+            'wcuirs_uri': fil      
         }                                                                       
 
 opener = urllib2.build_opener()                                                 
 opener.addheaders = [('User-agent','Mozilla/5.0')]                              
 
-url = 'https://itapp.wcu.edu/BanAuthRedirector/Default.aspx'                    
-request = urllib2.Request(url, urlencode(data))                                 
+                 
+request = urllib2.Request(fil, urlencode(data))                                 
 
-open("mycatpage.html", 'w').write(opener.open(request))
+open("temp.txt", 'w').write(opener.open(request))
