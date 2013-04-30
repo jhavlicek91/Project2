@@ -133,13 +133,17 @@ class SynonymWindow:
 
         #if file is selected, depth first search through file/directory
         if self.ftype.get() == 1 or self.ftype.get() == 2:   
-           DFS(self.op, self.excel, self.keywords, **self.finalwords)
+           self.wsh, self.wb = OpenExcel(self.excel, self.op)
+           DFS(self.wsh, self.op, self.excel, self.keywords, **self.finalwords)
+           CloseExcel(self.wb, self.excel)
 
         #if html is selected
         if self.ftype.get() == 3:
            self.results = html(self.user, self.passw, self.op, **self.finalwords)       
            #Write output to the excel file
-           MakeExcel(self.excel, self.op, self.keywords, **self.results);
+           self.wsh, self.wb = OpenExcel(self.excel, self.op)
+           MakeExcel(self.wsh, self.excel, self.op, self.keywords, **self.results)
+           CloseExcel(self.wb, self.excel)
 
         #close window when done
         self.parent.destroy()

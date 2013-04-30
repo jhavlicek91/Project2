@@ -72,7 +72,7 @@ def html(user, passw, fil, **keywords):
     return results
 
 
-def DFS(phile, excel, keys, **keywords):
+def DFS(wsh, phile, excel, keys, **keywords):
     #check if it is a file or directory
     print "DFS initiated"
     
@@ -82,7 +82,7 @@ def DFS(phile, excel, keys, **keywords):
        #go through every file in the directory
        for f in os.listdir(phile):
           print "%r" % (f)
-          DFS(phile + "/" + f, excel, keys, **keywords)
+          DFS(wsh, phile + "/" + f, excel, keys, **keywords)
           
     else:
 
@@ -90,10 +90,10 @@ def DFS(phile, excel, keys, **keywords):
        if phile.endswith('.pdf'):
           results = pdf(phile, **keywords)
           print "About to make excel file"
-          MakeExcel(excel, phile, keys, **results)
+          MakeExcel(wsh, excel, phile, keys, **results)
 
        elif phile.endswith('.txt'):
           results = ReadTextFile(phile, **keywords)
-          MakeExcel(excel, phile, keys, **results)
+          MakeExcel(wsh, excel, phile, keys, **results)
 
           
