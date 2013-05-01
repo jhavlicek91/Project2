@@ -1,16 +1,9 @@
 import os.path
 import urllib
-import xlwt
-import xlrd
-from xlutils.copy import copy
 import os
-import re
 from bs4 import BeautifulSoup
 from urllib import urlencode, urlopen                                       
 import urllib2    
-import nltk 
-nltk.data.path.append('./nltk_data/')
-from nltk.corpus import wordnet as wn
 from outputexcel import *
 from readtext import *
 

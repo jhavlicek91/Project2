@@ -1,14 +1,8 @@
 import os.path
-from Tkinter import *
-import tkFileDialog
-import urllib
 import xlwt
 import xlrd
 from xlutils.copy import copy
 import os
-import re
-from bs4 import BeautifulSoup
-import nltk 
 
 index = 0
 
