@@ -8,20 +8,6 @@ def ReadTextFile(FileName, **finalwords):
     #Get the text file to search through and open it
     f = file(FileName, 'r')
 
-    for k in synonyms:
-       caps = list()
-    
-       for w in synonyms[k]: 
-          #account for capital letters as well
-          if w[0].isupper(): 
-             cap = w.lower()
-          else:
-             cap = w.title()   
-          caps.append(cap)
-
-       for c in caps:
-          synonyms[k].append(c)
-
     #Create dictionary that has each keyword and the 
     #number of times it appeared in the file
     complete = dict()
@@ -34,27 +20,15 @@ def ReadTextFile(FileName, **finalwords):
     for line in f:
         for k in complete:
             for w in complete[k]:
-                instances = re.findall('\\b'+w+'\\b', line)
+                #replace the 
+                line = line.replace("\xe2\x80\xa9", " ")
+                instances = re.findall('\\b' + w + '\\b', line.lower())
+                print "%r" % (line.lower())
                 amount = len(instances)
                 new_amount = amount + complete[k][w]
                 complete[k][w] = new_amount
 
     print "%r" % (complete)
-    for k in complete:
-        
-        #sort dictionary
-        sort = sorted(complete[k]) 
-        print "%r" %(sort)
-        
-        #create a new dictionary without both capital and non capital letters
-        comp = dict()
-        halfway = len(complete[k]) / 2;
-        for i in range(0, halfway):
-           key = sort[i]
-           key2 = sort[i + halfway]
-           comp[key] = complete[k][key] + complete[k][key2] 
-        complete[k] = comp
-        print "%r" % (complete[k])
 
     #Close the file you read
     f.close()

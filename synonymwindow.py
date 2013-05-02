@@ -42,7 +42,7 @@ class SynonymWindow:
             self.syns = wn.synsets(k)
             for si in self.syns:
                for l in si.lemmas:
-                  self.dictionary[k].append(l.name)
+                  self.dictionary[k].append(l.name.lower())
                   
 
         #get rid of duplicates in list of synonyms

@@ -88,7 +88,7 @@ def MakeExcel(worksheet, excelfile, searchfile, keyword, **results):
      
     for k in results:
        worksheet.write(index, column, k.capitalize())
-       worksheet.write(index, column + 1, results[k][k.capitalize()])
+       worksheet.write(index, column + 1, results[k][k])
        column += 3 
 
     #Write the rest of the cells
@@ -100,8 +100,8 @@ def MakeExcel(worksheet, excelfile, searchfile, keyword, **results):
        index += 1 
        summ = 0
        for w in results[k]:
-          if w != k.capitalize():
-             worksheet.write(index, column, w)
+          if w != k:
+             worksheet.write(index, column, w.capitalize())
              worksheet.write(index, column + 1, results[k][w])
              index += 1
           summ += results[k][w]
