@@ -12,7 +12,7 @@ def makeLambda(f, *args):
 	return lambda: f(*args) 
 
 class SynonymWindow:
-    def __init__(self, lastw, parent, keyword, excel, op, ftype, user, passw):
+    def __init__(self, lastw, parent, keyword, excel, op, ftype, user, passw, ws):
 
         self.lastw = lastw
         self.parent = parent
@@ -24,6 +24,7 @@ class SynonymWindow:
         self.ftype = ftype
         self.user = user
         self.passw = passw
+        self.ws = ws
         self.finalwords = dict()
 
         #get different keywords from box
@@ -126,7 +127,7 @@ class SynonymWindow:
 
         #if file is selected, depth first search through file/directory
         if self.ftype.get() == 1 or self.ftype.get() == 2:   
-           self.wsh, self.wb = OpenExcel(self.excel, self.op)
+           self.wsh, self.wb = OpenExcel(self.excel, self.op, self.ws)
            DFS(self.wsh, self.op, self.excel, self.keywords, **self.finalwords)
            CloseExcel(self.wb, self.excel)
 
@@ -134,7 +135,7 @@ class SynonymWindow:
         if self.ftype.get() == 3:
            self.results = html(self.user, self.passw, self.op, **self.finalwords)       
            #Write output to the excel file
-           self.wsh, self.wb = OpenExcel(self.excel, self.op)
+           self.wsh, self.wb = OpenExcel(self.excel, self.op, self.ws)
            MakeExcel(self.wsh, self.excel, self.op, self.keywords, **self.results)
            CloseExcel(self.wb, self.excel)
 

@@ -51,10 +51,6 @@ class WindowOne:
         self.usertext = Label(frame, text = "Username and Password (If needed)")
         self.usertext.grid(row = 4, column = 0, sticky = W)
 
-        #add username box
-        #self.usert = Label(frame, text = "Username: ")
-        #self.usert.grid(row = 5, column = 0, sticky = W)
-
         self.user = Entry(frame, width = 20)
         self.user.grid(row = 5, column = 0, sticky = W)
 
@@ -73,12 +69,6 @@ class WindowOne:
         self.head2 = Label(frame, text = "Output Excel File:")
         self.head2.grid(row = 10, column = 0, sticky = W)
 
-	    #Add excel work book page
-        #self.head3 = Label(frame, text = "Worksheet Title:").grid(row = 8, column = 0, sticky = W)
-
-	    #add workbook textbox
-        #self.worksheetEnter = Entry(frame, width = 35).grid(row = 9, column = 0)
-
         def GetFileName2():
             # get filename
             filename = tkFileDialog.asksaveasfilename()
@@ -94,9 +84,17 @@ class WindowOne:
         self.outputdialog = Button(frame, text = "File", fg = "black", command = GetFileName2 )
         self.outputdialog.grid(row = 11, column = 1 )
 
+        #Add excel work book page
+        self.head3 = Label(frame, text = "Worksheet Title:").grid(row = 12, column = 0, sticky = W)
+
+	#add workbook textbox
+        sheet = StringVar()
+        self.worksheetEnter = Entry(frame, width = 35, textvariable = sheet)
+        self.worksheetEnter.grid(row = 13, column = 0)
+
         #Add go button
         self.GObutton = Button(frame,text = "Go!", fg = "black", command = self.Go )
-        self.GObutton.grid(row = 12,column = 2)
+        self.GObutton.grid(row = 14,column = 2)
 
 
     #Function for when go is clicked
@@ -104,6 +102,7 @@ class WindowOne:
         self.keyword = self.keywordEnter.get()
         self.excel = self.outputEnter.get()
         self.open = self.input.get()
+        self.ws = self.worksheetEnter.get()
            
         if self.open == "": 
            e1 = Tk()
@@ -131,7 +130,7 @@ class WindowOne:
            else:
               filename = self.excel + '.xls'
            
-           w2 = SynonymWindow(self.parent, master1,  self.keyword, filename, self.open, self.ftype, self.user, self.passw)
+           w2 = SynonymWindow(self.parent, master1,  self.keyword, filename, self.open, self.ftype, self.user, self.passw, self.ws)
 
     def CloseAndOpen(self):
         #close window when done
