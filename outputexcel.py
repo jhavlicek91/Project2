@@ -5,9 +5,14 @@ from xlutils.copy import copy
 import os
 
 index = 0
+totals = dict()
 
-def OpenExcel(excelfile, searchfile, wsheet):
+def OpenExcel(excelfile, searchfile, wsheet, **results):
 
+    global totals
+    for key in results:
+       totals[key] = 0
+       
     articleName = searchfile.split('/')
     article = articleName[-1]
     #Determine file to write to
@@ -50,10 +55,26 @@ def CloseExcel(workbook, excelfile):
 
    workbook.save(filename)
 
+def WriteTotal(worksheet):
+
+   global totals
+   global index
+
+   column = 1
+
+   #Write the total results for each word
+   for key in totals:
+      worksheet.write(index, column, "Final Total")
+      worksheet.write(index, column + 1, totals[key])
+      column += 3
+   
+   
+
 #Function for writing results to an excel file
 def MakeExcel(worksheet, excelfile, searchfile, keyword, **results):
 
     global index
+    global totals
     articleName = searchfile.split('/')
     article = articleName[-1]
 
@@ -110,8 +131,12 @@ def MakeExcel(worksheet, excelfile, searchfile, keyword, **results):
        worksheet.write(index + 1, column, "Total")
        worksheet.write(index + 1, column + 1, summ)
        maxindex = max(maxindex, index + 1)
+       #keep track of overall totals
+       totals[k] = totals[k] +  summ
        column += 3
        index = tempindex
+
+       
        
     index = maxindex + 2
 
