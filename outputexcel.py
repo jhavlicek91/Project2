@@ -20,28 +20,16 @@ def OpenExcel(excelfile, searchfile, wsheet, **results):
        filename = excelfile
     else:
        filename = excelfile + '.xls'
-    
-    if len(article) > 20:
-       sheetName = article[-18:] + '...'
-    else:
-       sheetName = article
 
     if(os.path.isfile(filename)):
        tempbook = xlrd.open_workbook(filename, formatting_info = True)
-       sheetList = tempbook.sheet_names()
-       for sheet in sheetList:
-          if sheet == sheetName:
-             if sheetName.endswith('I'):
-                sheetName = sheetName + "I"
-	     else:
-	        sheetName = sheetName + "_I"
-             break
+
        workbook = copy(tempbook)
-       worksheet = workbook.add_sheet(sheetName)
+       worksheet = workbook.add_sheet(wsheet)
 
     else:
        workbook = xlwt.Workbook(encoding = 'ascii')
-       worksheet = workbook.add_sheet(sheetName)
+       worksheet = workbook.add_sheet(wsheet)
 
     return worksheet, workbook
 
@@ -135,9 +123,7 @@ def MakeExcel(worksheet, excelfile, searchfile, keyword, **results):
        totals[k] = totals[k] +  summ
        column += 3
        index = tempindex
-
-       
-       
+  
     index = maxindex + 2
 
 

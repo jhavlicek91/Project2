@@ -23,7 +23,6 @@ def ReadTextFile(FileName, **finalwords):
                 #replace the 
                 line = line.replace("\xe2\x80\xa9", " ")
                 instances = re.findall('\\b' + w + '\\b', line.lower())
-                print "%r" % (line.lower())
                 amount = len(instances)
                 new_amount = amount + complete[k][w]
                 complete[k][w] = new_amount
