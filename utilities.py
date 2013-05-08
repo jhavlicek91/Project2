@@ -40,23 +40,26 @@ def html(user, passw, fil, **keywords):
             'wcuirs_uri':fil 
        }
 
-       response = urlopen(fil, urlencode(data))                           
-                              
+       sock = urlopen(fil, urlencode(data))
+       htmlsource = sock.read()
+       sock.close()
+       soup = BeautifulSoup(htmlsource)
+       result = soup.get_text()
        f = open('temp.txt', 'w')
-       f.write(response.read())
+       f.write(result.encode('utf8'))
        f.close()
-       
+
     else: 
 
        if fil.startswith("http"):
           sock = urllib.urlopen(fil)
        else:
           sock = urllib.urlopen("http://" + fil + "/")
-       htmlsource = sock.read()  
-       sock.close()   
+       htmlsource = sock.read()
+       sock.close()
        soup = BeautifulSoup(htmlsource)
        result = soup.get_text()
-       f = open('temp.txt','w')
+       f = open('temp.txt', 'w')
        f.write(result.encode('utf8'))
        f.close()
     results = ReadTextFile("temp.txt", **keywords)
