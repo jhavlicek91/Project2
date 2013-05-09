@@ -74,8 +74,8 @@ def MakeExcel(worksheet, excelfile, searchfile, keyword, **results):
     style = xlwt.XFStyle()
     style.font = font
 
-    worksheet.col(0).width = 3333
-    worksheet.row(0).height = 400
+    worksheet.col(index).width = 3333
+    worksheet.row(index).height = 400
 
     #Set font and style of file
     font2 = xlwt.Font()
