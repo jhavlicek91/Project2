@@ -1,12 +1,13 @@
 import os.path
 import urllib
 import os
+import cookielib
 from bs4 import BeautifulSoup
 from urllib import urlencode, urlopen                                       
 import urllib2    
 from outputexcel import *
 from readtext import *
-
+from time import sleep
 
 def pdf(fil, **keywords):
 
@@ -31,6 +32,9 @@ def pdf(fil, **keywords):
     return results
     
 def html(user, passw, fil, **keywords):
+    #Somesites requires cookies
+    cj = cookielib.CookieJar()
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 
     if passw != '' and user != '':
        data = {                                                                        
@@ -39,29 +43,18 @@ def html(user, passw, fil, **keywords):
             'submit': 'Request Access',                                          
             'wcuirs_uri':fil 
        }
+    #Delay is needed for function to run correctly or else it polls fast
+    sleep(1)
+    request = urllib2.Request(fil, urlencode(data))
+    sleep(1)
+    response = opener.open(request)
+    f = open('temp.txt', 'w')
+    htmlsource = response.read()
+    soup = BeautifulSoup(htmlsource)
+    result = soup.get_text()
+    f.write(result.encode('utf8'))
+    f.close()
 
-       sock = urlopen(fil, urlencode(data))
-       htmlsource = sock.read()
-       sock.close()
-       soup = BeautifulSoup(htmlsource)
-       result = soup.get_text()
-       f = open('temp.txt', 'w')
-       f.write(result.encode('utf8'))
-       f.close()
-
-    else: 
-
-       if fil.startswith("http"):
-          sock = urllib.urlopen(fil)
-       else:
-          sock = urllib.urlopen("http://" + fil + "/")
-       htmlsource = sock.read()
-       sock.close()
-       soup = BeautifulSoup(htmlsource)
-       result = soup.get_text()
-       f = open('temp.txt', 'w')
-       f.write(result.encode('utf8'))
-       f.close()
     results = ReadTextFile("temp.txt", **keywords)
     os.remove("temp.txt")
 
