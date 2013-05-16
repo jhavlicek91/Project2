@@ -35,6 +35,7 @@ def html(user, passw, fil, **keywords):
     #Somesites requires cookies
     cj = cookielib.CookieJar()
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+    hdr = {'User-Agent': 'Mozilla/5.0'}
 
     if passw != '' and user != '':
        data = {                                                                        
@@ -45,7 +46,7 @@ def html(user, passw, fil, **keywords):
        }
     #Delay is needed for function to run correctly or else it polls fast
     sleep(1)
-    request = urllib2.Request(fil, urlencode(data))
+    request = urllib2.Request(fil, urlencode(data), headers=hdr)
     sleep(1)
     response = opener.open(request)
     f = open('temp.txt', 'w')
